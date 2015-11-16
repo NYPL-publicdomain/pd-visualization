@@ -1,0 +1,43 @@
+@import "mixins";
+@import "variables";
+
+@include keyframes(fadeIn) {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@include keyframes(fadeOut) {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@include keyframes(fadeInUp) {
+  0% {
+    opacity: 0;
+    @include transform(translate3d(0, 100%, 0));
+  }
+
+  100% {
+    opacity: 1;
+    @include transform(none);
+  }
+}
+
+@include keyframes(fadeOutDown) {
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    @include transform(translate3d(0, 100%, 0));
+  }
+}

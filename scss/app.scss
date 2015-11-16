@@ -1,0 +1,13 @@
+@import "../css/vendor/normalize.css";
+
+@import "mixins";
+@import "variables";
+@import "animations";
+
+body {
+  background: $grayDarkest;
+  color: $white;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}

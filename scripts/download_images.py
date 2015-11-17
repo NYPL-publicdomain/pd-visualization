@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*-
 
+# Description: downloads the smallest cropped image captures from a list of items
 # Example usage:
-#   python download_images.py ../data/pd_mms_items.json ../img/items
+#   python download_images.py ../data/captures.json ../img/items/
 
 import json
 import os
-from pprint import pprint
 import sys
 import urllib2
 
 # input
 if len(sys.argv) < 2:
-    print "Usage: %s <inputfile items json> <outputdir for images>" % sys.argv[0]
+    print "Usage: %s <inputfile captures json> <outputdir for images>" % sys.argv[0]
     sys.exit(1)
 INPUT_FILE = sys.argv[1]
 OUTPUT_DIR = sys.argv[2]
@@ -21,42 +21,39 @@ overwriteExisting = False
 imageURLPattern = "http://images.nypl.org/index.php?id=%s&t=b"
 imageExt = "jpg"
 
+captures = []
+count = 0
 successCount = 0
 skipCount = 0
 failCount = 0
 
-for line in open(INPUT_FILE,'r').readlines():
-    # Read line as json
-    item = json.loads(line)
-    # pprint(item)
-    # look for capture; if found, download the first one
-    if 'captureIds' in item and len(item['captureIds']) > 0:
-        captureId = item['captureIds'][0]
-        if "," in captureId:
-            captureId = captureId.split(",")[0]
-        imageURL = imageURLPattern % captureId
-        fileName = OUTPUT_DIR + "/" + captureId + "." + imageExt
-        # save file if not found or overwrite is set to True
-        if overwriteExisting or not os.path.isfile(fileName):
-            with open(fileName, 'wb') as f:
-                try:
-                    f.write(urllib2.urlopen(imageURL).read())
-                    f.close()
-                    successCount += 1
-                    print "Downloaded " + imageURL
-                except URLError, e:
-                    failCount += 1
-                    print "Error: " + imageURL + " (" + e.reason + ")"
-                except:
-                    failCount += 1
-                    print "Unexpected error:", sys.exc_info()[0]
-                    raise
-        else:
-            skipCount += 1
-            # print "Skipped " + imageURL
+with open(INPUT_FILE) as data_file:
+    captures = json.load(data_file)
+captureCount = len(captures)
+print "Downloading " + str(captureCount) + " captures..."
+
+for captureId in captures:
+    imageURL = imageURLPattern % captureId
+    fileName = OUTPUT_DIR + captureId + "." + imageExt
+    # save file if not found or overwrite is set to True
+    if overwriteExisting or not os.path.isfile(fileName):
+        with open(fileName, 'wb') as f:
+            try:
+                f.write(urllib2.urlopen(imageURL).read())
+                f.close()
+                successCount += 1
+                print str(count) + ". Downloaded " + imageURL + " (" + str(round(1.0 * count / captureCount * 100, 3)) + "%)"
+            except urllib2.URLError, e:
+                failCount += 1
+                print str(count) + ". URL error: " + imageURL , e.args
+            except:
+                failCount += 1
+                print str(count) + ". Unexpected error: " + imageURL , sys.exc_info()[0]
+                raise
     else:
         skipCount += 1
-        print "No Captures: " + item['_id']
+        # print str(count) + ". Skipped " + imageURL
+    count += 1
 
 print "Downloaded " + str(successCount) + " images."
 print "Skipped " + str(skipCount) + " images."

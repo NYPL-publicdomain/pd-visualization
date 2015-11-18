@@ -17,6 +17,7 @@ OUTPUT_DIR = sys.argv[2]
 
 # init
 data = {
+    "collectionTitle": [],
     "date": [],
     "genre": [],
     "resourceType": [],
@@ -31,7 +32,9 @@ for line in open(INPUT_FILE,'r').readlines():
     item = json.loads(line)
 
     for d in data:
-        if d in item and len(item[d]) > 0:
+        if d in item and isinstance(item[d], basestring):
+            data[d].append(item[d])
+        elif d in item and isinstance(item[d], (list, tuple)) and len(item[d]) > 0:
             entry = item[d][0]
             if isinstance(entry, basestring):
                 data[d].append(entry)

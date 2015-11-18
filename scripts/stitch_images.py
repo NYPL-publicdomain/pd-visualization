@@ -2,7 +2,7 @@
 
 # Description: stitches together item captures into one image
 # Example usage:
-#   python stitch_images.py ../data/captures.json ../img/items/ ../img/items_100_10x10.jpg 10 10
+#   python stitch_images.py ../data/captures.json ../img/items/ ../img/items_100_10x10.jpg 100 10 10
 
 from PIL import Image
 import json
@@ -11,18 +11,18 @@ import os
 import sys
 
 # input
-if len(sys.argv) < 5:
-    print "Usage: %s <inputfile captures json> <inputdir of images> <outputfile for stitched image> <image cell width> <image cell height>" % sys.argv[0]
+if len(sys.argv) < 6:
+    print "Usage: %s <inputfile captures json> <inputdir of images> <outputfile for stitched image> <images per row> <image cell width> <image cell height>" % sys.argv[0]
     sys.exit(1)
 INPUT_FILE = sys.argv[1]
 INPUT_IMAGE_DIR = sys.argv[2]
 OUTPUT_FILE = sys.argv[3]
-ITEM_W = int(sys.argv[4])
-ITEM_H =  int(sys.argv[5])
+ITEMS_PER_ROW = int(sys.argv[4])
+ITEM_W = int(sys.argv[5])
+ITEM_H =  int(sys.argv[6])
 
 # config
 imageExt = "jpg"
-itemsPerRow = 100
 
 # init captures
 captures = []
@@ -32,8 +32,8 @@ captureCount = len(captures)
 print "Loaded " + str(captureCount) + " captures..."
 
 # init
-rows = int(math.ceil(captureCount / itemsPerRow))
-imageW = ITEM_W * itemsPerRow
+rows = int(math.ceil(captureCount / ITEMS_PER_ROW))
+imageW = ITEM_W * ITEMS_PER_ROW
 imageH = rows * ITEM_H
 x = 0
 y = 0
@@ -54,7 +54,7 @@ for captureId in captures:
         fileName = INPUT_IMAGE_DIR + captureId + "." + imageExt
         try:
             im = Image.open(fileName)
-            im.thumbnail((ITEM_W, ITEM_H))
+            im.thumbnail((ITEM_W, ITEM_H), Image.NEAREST)
             imageBase.paste(im, (x, y))
             print "Pasted " + fileName
         except IOError:
@@ -67,12 +67,11 @@ for captureId in captures:
     else:
         skipCount += 1
     x += ITEM_W
-    break
 
 # Save image
 print "Saving stiched image..."
 
-imageBlank.save(OUTPUT_FILE)
+imageBase.save(OUTPUT_FILE)
 
 print "Saved image: " + OUTPUT_FILE
 print "Failed to add " + str(failCount) + " images."

@@ -2,7 +2,7 @@
 
 # Description: stitches together item captures into one image
 # Example usage:
-#   python stitch_images.py ../data/captures.json ../img/items/ ../img/items_100_10x10.jpg 100 10 10
+#   python stitch_images.py ../data/items.json ../img/items/ ../img/items_100_10x10.jpg 100 10 10
 
 from PIL import Image
 import json
@@ -12,7 +12,7 @@ import sys
 
 # input
 if len(sys.argv) < 6:
-    print "Usage: %s <inputfile captures json> <inputdir of images> <outputfile for stitched image> <images per row> <image cell width> <image cell height>" % sys.argv[0]
+    print "Usage: %s <inputfile items json> <inputdir of images> <outputfile for stitched image> <images per row> <image cell width> <image cell height>" % sys.argv[0]
     sys.exit(1)
 INPUT_FILE = sys.argv[1]
 INPUT_IMAGE_DIR = sys.argv[2]
@@ -24,15 +24,15 @@ ITEM_H =  int(sys.argv[6])
 # config
 imageExt = "jpg"
 
-# init captures
-captures = []
+# init items
+items = []
 with open(INPUT_FILE) as data_file:
-    captures = json.load(data_file)
-captureCount = len(captures)
-print "Loaded " + str(captureCount) + " captures..."
+    items = json.load(data_file)
+itemCount = len(items)
+print "Loaded " + str(itemCount) + " items..."
 
 # init
-rows = int(math.ceil(captureCount / ITEMS_PER_ROW))
+rows = int(math.ceil(itemCount / ITEMS_PER_ROW))
 imageW = ITEM_W * ITEMS_PER_ROW
 imageH = rows * ITEM_H
 x = 0
@@ -44,7 +44,8 @@ skipCount = 0
 print "Creating blank image at (" + str(imageW) + ", " + str(imageH) + ")"
 imageBase = Image.new("RGB", (imageW, imageH), "black")
 
-for captureId in captures:
+for item in itemCount:
+    captureId = item['captureId']
     # Determine x/y
     if x >= imageW:
         x = 0

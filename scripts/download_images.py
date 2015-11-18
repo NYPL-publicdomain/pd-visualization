@@ -2,7 +2,7 @@
 
 # Description: downloads the smallest cropped image captures from a list of items
 # Example usage:
-#   python download_images.py ../data/captures.json ../img/items/
+#   python download_images.py ../data/items.json ../img/items/
 
 import json
 import os
@@ -11,7 +11,7 @@ import urllib2
 
 # input
 if len(sys.argv) < 2:
-    print "Usage: %s <inputfile captures json> <outputdir for images>" % sys.argv[0]
+    print "Usage: %s <inputfile items json> <outputdir for images>" % sys.argv[0]
     sys.exit(1)
 INPUT_FILE = sys.argv[1]
 OUTPUT_DIR = sys.argv[2]
@@ -21,18 +21,19 @@ overwriteExisting = False
 imageURLPattern = "http://images.nypl.org/index.php?id=%s&t=b"
 imageExt = "jpg"
 
-captures = []
+items = []
 count = 0
 successCount = 0
 skipCount = 0
 failCount = 0
 
 with open(INPUT_FILE) as data_file:
-    captures = json.load(data_file)
-captureCount = len(captures)
-print "Downloading " + str(captureCount) + " captures..."
+    items = json.load(data_file)
+itemCount = len(items)
+print "Downloading " + str(itemCount) + " captures..."
 
-for captureId in captures:
+for item in items:
+    captureId = item['captureId']
     imageURL = imageURLPattern % captureId
     fileName = OUTPUT_DIR + captureId + "." + imageExt
     # save file if not found or overwrite is set to True
@@ -42,7 +43,7 @@ for captureId in captures:
                 f.write(urllib2.urlopen(imageURL).read())
                 f.close()
                 successCount += 1
-                print str(count) + ". Downloaded " + imageURL + " (" + str(round(1.0 * count / captureCount * 100, 3)) + "%)"
+                print str(count) + ". Downloaded " + imageURL + " (" + str(round(1.0 * count / itemCount * 100, 3)) + "%)"
             except urllib2.URLError, e:
                 failCount += 1
                 print str(count) + ". URL error: " + imageURL , e.args

@@ -2,7 +2,7 @@
 
 # Description: stitches together item captures into one image
 # Example usage:
-#   python stitch_images.py ../data/items.json ../img/items/ ../img/items_100_10x10.jpg 100 10 10
+#   python stitch_images.py ../data/captures.json ../img/items/ ../img/items_100_10x10.jpg 100 10 10
 
 from PIL import Image
 import json
@@ -12,7 +12,7 @@ import sys
 
 # input
 if len(sys.argv) < 6:
-    print "Usage: %s <inputfile items json> <inputdir of images> <outputfile for stitched image> <images per row> <image cell width> <image cell height>" % sys.argv[0]
+    print "Usage: %s <inputfile item captures json> <inputdir of images> <outputfile for stitched image> <images per row> <image cell width> <image cell height>" % sys.argv[0]
     sys.exit(1)
 INPUT_FILE = sys.argv[1]
 INPUT_IMAGE_DIR = sys.argv[2]
@@ -44,8 +44,7 @@ skipCount = 0
 print "Creating blank image at (" + str(imageW) + ", " + str(imageH) + ")"
 imageBase = Image.new("RGB", (imageW, imageH), "black")
 
-for item in itemCount:
-    captureId = item['captureId']
+for captureId in items:
     # Determine x/y
     if x >= imageW:
         x = 0

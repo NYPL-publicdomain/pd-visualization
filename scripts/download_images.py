@@ -2,7 +2,16 @@
 
 # Description: downloads the smallest cropped image captures from a list of items
 # Example usage:
-#   python download_images.py ../data/items.json ../img/items/
+#   python download_images.py ../data/captures.json ../img/items/ b
+# Derivative types:
+#   t: 150
+#   b: 100 (cropped)
+#   f: 192
+#   r: 300
+#   w: 760
+#   q: 1600
+#   v: 2560
+#   g: Original
 
 import json
 import os
@@ -11,14 +20,15 @@ import urllib2
 
 # input
 if len(sys.argv) < 2:
-    print "Usage: %s <inputfile items json> <outputdir for images>" % sys.argv[0]
+    print "Usage: %s <inputfile item captures json> <outputdir for images> <derivative code>" % sys.argv[0]
     sys.exit(1)
 INPUT_FILE = sys.argv[1]
 OUTPUT_DIR = sys.argv[2]
+DERIVATIVE_CODE = sys.argv[3]
 
 # config
 overwriteExisting = False
-imageURLPattern = "http://images.nypl.org/index.php?id=%s&t=b"
+imageURLPattern = "http://images.nypl.org/index.php?id=%s&t=" + DERIVATIVE_CODE
 imageExt = "jpg"
 
 items = []
@@ -32,8 +42,7 @@ with open(INPUT_FILE) as data_file:
 itemCount = len(items)
 print "Downloading " + str(itemCount) + " captures..."
 
-for item in items:
-    captureId = item['captureId']
+for captureId in items:
     imageURL = imageURLPattern % captureId
     fileName = OUTPUT_DIR + captureId + "." + imageExt
     # save file if not found or overwrite is set to True

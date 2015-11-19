@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Description: normalizes data for use in all other scripts
+# Description: retrieves the date (year) of items
 # Example usage:
-#   python normalize_data.py ../data/src/pd_items.json ../data/items.json
+#   python get_dates.py ../data/src/pd_items.json ../data/dates.json
 
 from collections import Counter
 import json
@@ -12,21 +12,16 @@ import sys
 
 # input
 if len(sys.argv) < 2:
-    print "Usage: %s <inputfile items json> <outputfile items json>" % sys.argv[0]
+    print "Usage: %s <inputfile items json> <outputfile item dates json>" % sys.argv[0]
     sys.exit(1)
 INPUT_FILE = sys.argv[1]
 OUTPUT_FILE = sys.argv[2]
 
 # config
-imageURLPattern = '^http://images\.nypl\.org/index\.php\?id=([^&]+)&t=g$'
 yearPattern = '[^0-9]*([12][0-9]{3}).*'
 
 # init
-items = []
-
-# Captures
-noCaptureCount = 0
-invalidCaptureCount = 0
+dates = []
 
 # Get a year from string
 def getYearFromString(d):
@@ -60,47 +55,26 @@ def getYearFromString(d):
 
 for line in open(INPUT_FILE,'r').readlines():
     # Read line as json
-    _item = json.loads(line)
-    item = {}
-    # pprint(item)
-
-    # Retrieve capture ids of item's first capture
-    captureId = ""
-    if "captures" in _item and len(_item["captures"]) > 0:
-        capture = _item["captures"][0]
-        match = re.search(imageURLPattern, capture)
-        if match:
-            captureId = match.group(1).strip()
-        if not captureId:
-            print "Invalid Image URL: " + capture
-            invalidCaptureCount += 1
-    else:
-        noCaptureCount += 1
-    item['captureId'] = captureId
+    item = json.loads(line)
 
     # Retrieve date
     date = ""
-    if "date" in _item and len(_item["date"]) > 0:
-        for d in _item["date"]:
+    if "date" in item and len(item["date"]) > 0:
+        for d in item["date"]:
             year = getYearFromString(d)
             if year:
                 date = year
                 break
         # if not date:
         #     print "No date found for: "
-        #     pprint(_item["date"])
-    item['date'] = date
-    items.append(item)
-
-# Report on captures
-print str(noCaptureCount) + " items with no captures"
-print str(invalidCaptureCount) + " items with invalid captures"
+        #     pprint(item["date"])
+    dates.append(date)
 
 # Report on dates
-dates = Counter([i["date"] for i in items])
-pprint(dates)
+date_counts = Counter(dates)
+pprint(date_counts)
 
 # Write out data
 with open(OUTPUT_FILE, 'w') as outfile:
-    json.dump(items, outfile)
-print "Wrote " + str(len(items)) + " lines to " + OUTPUT_FILE
+    json.dump(dates, outfile)
+print "Wrote " + str(len(dates)) + " lines to " + OUTPUT_FILE

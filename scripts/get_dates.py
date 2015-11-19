@@ -1,27 +1,34 @@
 # -*- coding: utf-8 -*-
 
-# Description: retrieves the date (year) of items
+# Description: retrieves the date (year or century) of items
 # Example usage:
-#   python get_dates.py ../data/src/pd_items.json ../data/dates.json
+#   python get_dates.py ../data/src/pd_items.json ../data/dates.json ../data/item_dates.json year
+#   python get_dates.py ../data/src/pd_items.json ../data/centuries.json ../data/item_centuries.json century
 
 from collections import Counter
 import json
+import math
 from pprint import pprint
 import re
 import sys
 
 # input
-if len(sys.argv) < 2:
-    print "Usage: %s <inputfile items json> <outputfile item dates json>" % sys.argv[0]
+if len(sys.argv) < 4:
+    print "Usage: %s <inputfile items json> <outputfile dates json> <outputfile item dates json> <time unit>" % sys.argv[0]
     sys.exit(1)
 INPUT_FILE = sys.argv[1]
 OUTPUT_FILE = sys.argv[2]
+OUTPUT_ITEMS_FILE = sys.argv[3]
+TIME_UNIT = sys.argv[4]
 
 # config
 yearPattern = '[^0-9]*([12][0-9]{3}).*'
+minYear = 1000
+maxYear = 2015
 
 # init
 dates = []
+item_dates = []
 
 # Get a year from string
 def getYearFromString(d):
@@ -47,11 +54,36 @@ def getYearFromString(d):
         century = int(match.group(1))
         century -= 1
         return century * 100
-    # Case: 865, 950 (super old)
-    match = re.search('[^0-9]*([89][0-9]{2}).*', d)
-    if match:
-        return int(match.group(1))
     return False
+
+def addDate(d):
+    global dates
+    global item_dates
+    global TIME_UNIT
+
+    date = next(iter([_d for _d in dates if _d['value']==d]), False)
+
+    if date:
+        dates[date['index']]['count'] += 1
+    else:
+        label = 'Unknown'
+        url = ''
+        if d:
+            label = str(d)
+            url = 'http://digitalcollections.nypl.org/search/index?utf8=✓&keywords=&year_begin='+label+'&year_end='+label
+            if TIME_UNIT == 'century':
+                label += "th century"
+                url = 'http://digitalcollections.nypl.org/search/index?utf8=✓&keywords=&year_begin='+str(d-1)+'00&year_end='+str(d)+'00'
+        date = {
+            'index': len(dates),
+            'value': d,
+            'label': label,
+            'url': url,
+            'count': 1
+        }
+        dates.append(date)
+
+    item_dates.append(date['index'])
 
 for line in open(INPUT_FILE,'r').readlines():
     # Read line as json
@@ -62,19 +94,25 @@ for line in open(INPUT_FILE,'r').readlines():
     if "date" in item and len(item["date"]) > 0:
         for d in item["date"]:
             year = getYearFromString(d)
-            if year:
+            if year and year > minYear and year < maxYear:
                 date = year
+                if TIME_UNIT == 'century':
+                    date = int(math.floor(1.0 * year / 100)) + 1
                 break
         # if not date:
         #     print "No date found for: "
         #     pprint(item["date"])
-    dates.append(date)
+    addDate(date)
 
 # Report on dates
-date_counts = Counter(dates)
-pprint(date_counts)
+dates = sorted(dates, key=lambda d: d['count'], reverse=True)
+pprint(dates)
 
 # Write out data
 with open(OUTPUT_FILE, 'w') as outfile:
     json.dump(dates, outfile)
-print "Wrote " + str(len(dates)) + " lines to " + OUTPUT_FILE
+print "Wrote " + str(len(dates)) + " dates to " + OUTPUT_FILE
+
+with open(OUTPUT_ITEMS_FILE, 'w') as outfile:
+    json.dump(item_dates, outfile)
+print "Wrote " + str(len(item_dates)) + " items to " + OUTPUT_FILE

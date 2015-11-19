@@ -50,6 +50,7 @@ for line in open(INPUT_FILE,'r').readlines():
 for d in data:
     fname = OUTPUT_DIR + d + ".json"
     counts = Counter(data[d])
+    counts = sorted(counts.items(), key=lambda i: i[1], reverse=True)
     with open(fname, 'w') as outfile:
         json.dump(counts, outfile)
     print "Wrote to file: " + fname

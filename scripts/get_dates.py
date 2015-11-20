@@ -105,7 +105,7 @@ for line in open(INPUT_FILE,'r').readlines():
     addDate(date)
 
 # Report on dates
-dates = sorted(dates, key=lambda d: d['count'], reverse=True)
+dates = sorted(dates, key=lambda d: d['value'])
 pprint(dates)
 
 # Write out data

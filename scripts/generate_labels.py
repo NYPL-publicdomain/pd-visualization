@@ -11,14 +11,14 @@ from pprint import pprint
 import sys
 
 if len(sys.argv) < 6:
-    print "Usage: %s <inputdir of data> <outputfile labels json> <images per row> <image cell height> <marker threshold> <item threshold>" % sys.argv[0]
+    print "Usage: %s <inputdir of data> <outputfile labels json> <images per row> <image cell height> <group item threshold> <group threshold>" % sys.argv[0]
     sys.exit(1)
 INPUT_DIR = sys.argv[1]
 OUTPUT_FILE = sys.argv[2]
 ITEMS_PER_ROW = int(sys.argv[3])
 ITEM_H = int(sys.argv[4])
-MARKER_THRESHOLD = int(sys.argv[5])
-ITEM_THRESHOLD = int(sys.argv[6])
+GROUP_ITEM_THRESHOLD = int(sys.argv[5])
+GROUP_THRESHOLD = int(sys.argv[6])
 
 labels = [
     {'id': 'centuries', 'label': 'Date Created', 'markers': []},
@@ -56,7 +56,7 @@ for i, l in enumerate(labels):
         data = [d for d in data if d["value"]]
         y = 0
         for item in data:
-            if item['count'] < MARKER_THRESHOLD and len(data) > ITEM_THRESHOLD:
+            if item['count'] < GROUP_ITEM_THRESHOLD and len(data) > GROUP_THRESHOLD:
                 other['count'] += item['count']
             else:
                 url = item['url'] if 'url' in item else ''

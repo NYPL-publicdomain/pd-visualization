@@ -2,11 +2,11 @@
 
 # Description: stitches together item captures into one image
 # Example usage:
-#   python stitch_images.py ../data/ ../img/items/ ../img/ 100 10 10 default
-#   python stitch_images.py ../data/ ../img/items/ ../img/ 100 10 10 centuries
-#   python stitch_images.py ../data/ ../img/items/ ../img/ 100 10 10 collections
-#   python stitch_images.py ../data/ ../img/items/ ../img/ 100 10 10 colors
-#   python stitch_images.py ../data/ ../img/items/ ../img/ 100 10 10 genres
+#   python stitch_images.py ../data/ ../img/items/ ../img/ 100 10 10 default 50 20
+#   python stitch_images.py ../data/ ../img/items/ ../img/ 100 10 10 centuries 50 20
+#   python stitch_images.py ../data/ ../img/items/ ../img/ 100 10 10 collections 50 20
+#   python stitch_images.py ../data/ ../img/items/ ../img/ 100 10 10 colors 50 20
+#   python stitch_images.py ../data/ ../img/items/ ../img/ 100 10 10 genres 50 20
 
 from PIL import Image
 import json
@@ -15,8 +15,8 @@ import os
 import sys
 
 # input
-if len(sys.argv) < 7:
-    print "Usage: %s <inputdir of data> <inputdir of images> <outputdir for image> <images per row> <image cell width> <image cell height> <data group>" % sys.argv[0]
+if len(sys.argv) < 9:
+    print "Usage: %s <inputdir of data> <inputdir of images> <outputdir for image> <images per row> <image cell width> <image cell height> <data group>  <group item threshold> <group threshold>" % sys.argv[0]
     sys.exit(1)
 INPUT_DATA_DIR = sys.argv[1]
 INPUT_IMAGE_DIR = sys.argv[2]
@@ -25,6 +25,8 @@ ITEMS_PER_ROW = int(sys.argv[4])
 ITEM_W = int(sys.argv[5])
 ITEM_H =  int(sys.argv[6])
 DATA_GROUP = sys.argv[7]
+GROUP_ITEM_THRESHOLD = int(sys.argv[8])
+GROUP_THRESHOLD = int(sys.argv[9])
 
 # config
 imageExt = "jpg"
@@ -42,13 +44,36 @@ item_groups = []
 group_filename = INPUT_DATA_DIR + DATA_GROUP + ".json"
 items_group_filename = INPUT_DATA_DIR + "item_" + DATA_GROUP + ".json"
 if os.path.isfile(group_filename) and os.path.isfile(items_group_filename):
+    _groups = []
     with open(group_filename) as data_file:
-        groups = json.load(data_file)
+        _groups = json.load(data_file)
     with open(items_group_filename) as data_file:
         item_groups = json.load(data_file)
+    # Take out unknown group
+    unknown = next(iter([g for g in _groups if not g['value']]), False)
+    other = {
+        'count': 0,
+        'items': []
+    }
     # Add items to appropriate groups
-    for i,g in enumerate(groups):
-        groups[i]['items'] = [item_i for item_i, group_i in enumerate(item_groups) if group_i == g['index']]
+    for i,g in enumerate(_groups):
+        if g['value']:
+            item_ids = [item_i for item_i, group_i in enumerate(item_groups) if group_i == g['index']]
+            # this group is too small; add to "other" group
+            if g['count'] < GROUP_ITEM_THRESHOLD and len(_groups) > GROUP_THRESHOLD:
+                other['items'].extend(item_ids)
+                other['count'] += g['count']
+            else:
+                g['items'] = item_ids
+                groups.append(g)
+    # Add "other" group
+    if other['count']:
+        groups.append(other)
+
+    # Add "uknown" group
+    if unknown:
+        unknown['items'] = [item_i for item_i, group_i in enumerate(item_groups) if group_i == unknown['index']]
+        groups.append(unknown)
 else:
     # Put everything in one big group
     groups.append({

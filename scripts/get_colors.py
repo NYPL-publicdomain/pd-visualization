@@ -1,101 +1,24 @@
 # -*- coding: utf-8 -*-
 
-# Description: retrieves the dominant color of items
+# Description: retrieves the color-group of items
 # Example usage:
-#   python get_colors.py ../data/captures.json ../img/items/ ../data/colors.json ../data/item_colors.json
+#   python get_colors.py ../data/item_hsl.json ../data/colors.json ../data/item_colors.json
 
-from collections import namedtuple
 from colour import Color
 import json
-from math import sqrt
-from PIL import Image
+import math
 from pprint import pprint
-import random
 import sys
 
 # input
-if len(sys.argv) < 4:
-    print "Usage: %s <inputfile items json> <dir for images> <outputfile colors json> <outputfile item colors json>" % sys.argv[0]
+if len(sys.argv) < 3:
+    print "Usage: %s <inputfile color data json> <outputfile colors json> <outputfile item colors json>" % sys.argv[0]
     sys.exit(1)
 INPUT_FILE = sys.argv[1]
-INPUT_IMAGE_DIR = sys.argv[2]
-OUTPUT_FILE = sys.argv[3]
-OUTPUT_ITEMS_FILE = sys.argv[4]
+OUTPUT_FILE = sys.argv[2]
+OUTPUT_ITEMS_FILE = sys.argv[3]
 
 # config
-imageExt = "jpg"
-
-Point = namedtuple('Point', ('coords', 'n', 'ct'))
-Cluster = namedtuple('Cluster', ('points', 'center', 'n'))
-
-def get_points(img):
-    points = []
-    w, h = img.size
-    for count, color in img.getcolors(w * h):
-        points.append(Point(color, 3, count))
-    return points
-
-rtoh = lambda rgb: '#%s' % ''.join(('%02x' % p for p in rgb))
-
-def colorz(filename, n=3):
-    try:
-        img = Image.open(filename)
-        w, h = img.size
-        if w > 200 or h > 200:
-            img.thumbnail((200, 200))
-            w, h = img.size
-        points = get_points(img)
-        clusters = kmeans(points, n, 1)
-        rgbs = [map(int, c.center.coords) for c in clusters]
-        return map(rtoh, rgbs)
-    except IOError:
-        return []
-    except:
-        return []
-
-def euclidean(p1, p2):
-    return sqrt(sum([
-        (p1.coords[i] - p2.coords[i]) ** 2 for i in range(p1.n)
-    ]))
-
-def calculate_center(points, n):
-    vals = [0.0 for i in range(n)]
-    plen = 0
-    for p in points:
-        plen += p.ct
-        for i in range(n):
-            vals[i] += (p.coords[i] * p.ct)
-    return Point([(v / plen) for v in vals], n, 1)
-
-def kmeans(points, k, min_diff):
-    clusters = [Cluster([p], p, p.n) for p in random.sample(points, k)]
-
-    while 1:
-        plists = [[] for i in range(k)]
-
-        for p in points:
-            smallest_distance = float('Inf')
-            for i in range(k):
-                distance = euclidean(p, clusters[i].center)
-                if distance < smallest_distance:
-                    smallest_distance = distance
-                    idx = i
-            plists[idx].append(p)
-
-        diff = 0
-        for i in range(k):
-            old = clusters[i]
-            center = calculate_center(plists[i], old.n)
-            new = Cluster(plists[i], center, old.n)
-            clusters[i] = new
-            diff = max(diff, euclidean(old.center, new.center))
-
-        if diff < min_diff:
-            break
-
-    return clusters
-
-# init
 colors = [
     {'index': 0, 'value': '#ff0000', 'label': 'Red', 'count': 0},
     {'index': 1, 'value': '#ffa500', 'label': 'Orange', 'count': 0},
@@ -107,8 +30,10 @@ colors = [
     {'index': 7, 'value': '#000000', 'label': 'Black', 'count': 0},
     {'index': 8, 'value': '', 'label': 'Unknown', 'count': 0}
 ]
-black_luminance_threshold = 0.16
+black_luminance_threshold = 0.2
 white_luminance_threshold = 0.84
+
+# init
 item_colors = []
 
 # init items
@@ -122,15 +47,19 @@ def getNearestColor(c, color_list):
     global black_luminance_threshold
     global white_luminance_threshold
 
+    hue = c[0]
+    saturation = c[1]
+    luminance = c[2]
+
     # Create a copy
     color_list = color_list[:]
 
     # Check for black
-    if c.luminance < black_luminance_threshold:
+    if luminance < black_luminance_threshold:
         return next(iter([_c for _c in color_list if _c['label']=='Black']))
 
     # Check for white
-    elif c.luminance > white_luminance_threshold:
+    elif luminance > white_luminance_threshold and saturation < (1.0-white_luminance_threshold):
         return next(iter([_c for _c in color_list if _c['label']=='White']))
 
     # Remove black and white from list
@@ -139,10 +68,10 @@ def getNearestColor(c, color_list):
     # Find the color with the smallest distance in hue
     min_color_i = 0
     min_color = Color(color_list[min_color_i]['value'])
-    min_distance = abs(c.hue - min_color.hue)
+    min_distance = abs(hue - min_color.hue)
     for _c in color_list:
         _color = Color(_c['value'])
-        _distance = abs(c.hue - _color.hue)
+        _distance = abs(hue - _color.hue)
         if _distance < min_distance:
             min_color_i = _c['index']
             min_color = _color
@@ -150,21 +79,17 @@ def getNearestColor(c, color_list):
 
     return color_list[min_color_i]
 
-
 # analyze colors
-for i, captureId in enumerate(items):
-    if captureId:
-        fileName = INPUT_IMAGE_DIR + "415905" + "." + imageExt
-        imgColors = colorz(fileName, 3)
-        nearest_color = next(iter([_c for _c in colors if _c['label']=='Unknown']))
-        if len(imgColors) > 0:
-            c = Color(imgColors[0])
-            nearest_color = getNearestColor(c, colors)
-        colors[nearest_color['index']]['count'] += 1
-        item_colors.append(nearest_color['index'])
+for i, hsl in enumerate(items):
+    nearest_color = next(iter([_c for _c in colors if _c['label']=='Unknown']))
+    if len(hsl) > 0:
+        nearest_color = getNearestColor(hsl, colors)
+
+    colors[nearest_color['index']]['count'] += 1
+    item_colors.append(nearest_color['index'])
 
     sys.stdout.write('\r')
-    sys.stdout.write(str(round(1.0*i/itemCount*100,5))+'%')
+    sys.stdout.write(str(round(1.0*i/itemCount*100,3))+'%')
     sys.stdout.flush()
 
 # Write out data

@@ -2,7 +2,7 @@
 
 # Description: creates a mask/sprite for use in UI
 # Example usage:
-#   python generate_mask.py ../img/mask_100_50_10_6.png 100 50 10 10 6
+#   python generate_mask.py ../img/mask_100_50_10_10.png 100 50 10 10 10
 
 import math
 from PIL import Image
@@ -23,6 +23,7 @@ stepW = ITEMS_PER_ROW * ITEM_W
 imageW = stepW * STEPS
 imageH = ITEMS_PER_COL * ITEM_H
 stepsPerStep = int(1.0 * ITEMS_PER_ROW * ITEMS_PER_COL / STEPS)
+stepVelocity = 1.0 + 1.0 / STEPS
 indexH = 0
 
 # Create blank image
@@ -55,7 +56,7 @@ for step in range(STEPS):
             imageBase.paste(img, (int(x+x0), int(y)))
             x0 -= stepW
     sssteps -= 1
-    stepsPerStep = int(1.2 * stepsPerStep)
+    stepsPerStep = int(stepVelocity * stepsPerStep)
 
 # Save image
 print "Saving stiched image..."

@@ -3,7 +3,7 @@ var NYPLPD = (function() {
   function NYPLPD(options) {
     var defaults = {};
     options = $.extend({}, defaults, options);
-    //this.init(options);
+    this.init(options);
   }
 
   NYPLPD.prototype.init = function(options){

@@ -41,3 +41,14 @@
     @include transform(translate3d(0, 100%, 0));
   }
 }
+
+@include keyframes(fadeOutUp) {
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    @include transform(translate3d(0, -100%, 0));
+  }
+}

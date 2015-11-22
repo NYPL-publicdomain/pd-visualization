@@ -12,10 +12,39 @@
 </head>
 <body>
 
-  <p>Hello, World</p>
+  <div class="container">
+    <div id="viz" class="viz-container">
+      <div id="viz-images" class="viz-images">
+        <img src="centuries_100_10_10.jpg" data-group="centuries" class="viz-image active" />
+        <img src="collections_100_10_10.jpg" data-group="collections" class="viz-image" />
+        <img src="colors_100_10_10.jpg" data-group="colors" class="viz-image" />
+        <img src="genres_100_10_10.jpg" data-group="genres" class="viz-image" />
+      </div>
+      <div id="viz-markers" class="viz-markers">
+
+      </div>
+    </div>
+    <div id="nav" class="nav-container">
+      <div class="nav">
+        <a href="#info" class="info-button nav-item">?</a>
+        <div class="label nav-item">Group By:</div>
+        <div id="nav-tabs" class="nav-tabs"></div>
+      </div>
+    </div>
+    <div class="info overlay active">
+      <div>
+        <p>
+          On January 6th, 2016, <a href="http://www.nypl.org/">The New York Public Library</a> released 134,781 digital items into the public domain. This is a small experiment by <a href="http://www.nypl.org/collections/labs">NYPL Labs</a> to help patrons understand and explore what was contained in that release.</p>
+        <p>
+          <button class="info-button loading"></button>
+        </p>
+      </div>
+    </div>
+  </div>
 
   <script src="js/vendor/jquery-1.11.3.min.js"></script>
-  <script src="js/vendor/underscore-min.js"></script>
+  <!-- <script src="js/vendor/underscore-min.js"></script> -->
+  <script src="js/vendor/imagesloaded.pkgd.min.js"></script>
   <script src="js/app.js"></script>
 
 </body>

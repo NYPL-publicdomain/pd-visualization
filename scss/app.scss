@@ -5,9 +5,172 @@
 @import "animations";
 
 body {
+  font-family: "Kievit","Helvetica Neue","Helvetica",Helvetica,Arial,sans-serif;
   background: $grayDarkest;
   color: $white;
   margin: 0;
   padding: 0;
   overflow: hidden;
+}
+
+a,
+a:link,
+a:visited,
+a:hover,
+a:active {
+  color: $blueLight;
+}
+
+a:hover {
+  text-decoration: none;
+  color: lighten($blueLight, 10%);
+}
+
+.container {
+  width: 100%;
+  position: relative;
+}
+
+.nav-container {
+  width: $navWidth;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  right: 0;
+
+  .nav {
+    @include transform-origin(0 0);
+    @include transform(rotate(90degs));
+    @include clearfix();
+  }
+
+  .nav-item {
+    display: block;
+    float: left;
+    height: $navWidth - 10px;
+    line-height: $navWidth - 10px;
+    margin: 10px 20px 0 0;
+    padding: 0 20px;
+  }
+
+  .nav-tabs {
+    float: left;
+  }
+
+  .nav-tab {
+    cursor: pointer;
+  }
+}
+
+.viz-container {
+  position: relative;
+  width: auto;
+  min-width: $imageWidth + $markerWidth;
+  margin-right: $navWidth;
+  @include clearfix();
+}
+.viz-images {
+  width: $imageWidth;
+  float: left;
+
+  .viz-image {
+    width: 100%;
+    height: auto;
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: none;
+
+    &.active {
+      display: block;
+    }
+  }
+}
+
+.viz-markers {
+  margin-left: $imageWidth;
+
+  .markers {
+    display: none;
+    @include animation(fadeOutUp 1s);
+
+    &.active {
+      display: block;
+      @include animation(fadeInUp 1s);
+    }
+  }
+
+  .marker {
+    a, span {
+      display: block;
+      margin: 0;
+      padding: 10px;
+      border-top: 1px solid $grayDarker;
+    }
+  }
+}
+
+.overlay {
+  background: rgba($grayDarkest, 0.8);
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  display: none;
+  @include animation(fadeOutDown 0.5s);
+
+  &.active {
+    display: block;
+    @include animation(fadeInUp 0.5s);
+  }
+
+  > div {
+    width: 40%;
+    margin: 0 auto;
+    text-align: center;
+    position: relative;
+    top: 50%;
+    transform: translateY(-100%);
+    color: $white;
+    font-size: 1.6em;
+    line-height: 2;
+  }
+
+  .info-button {
+    display: inline-block;
+    padding: 0.3em 0.6em;
+    background: $blueLight;
+    color: $white;
+    cursor: pointer;
+
+    &:hover {
+      background: lighten($blueLight, 10%);
+    }
+
+    &:before {
+      content: 'Explore';
+    }
+
+    &.loading {
+      cursor: default;
+      opacity: 0.8;
+
+      &:hover {
+        background: $blueLight;
+      }
+
+      &:before {
+        content: 'Loading...'
+      }
+    }
+  }
+}
+
+@font-face{
+  font-family:"Kievit";
+  font-style:normal;
+  font-weight:400;
+  src:url("http://ux-static.nypl.org.s3-website-us-east-1.amazonaws.com/ff_kievit_web/KievitWeb-Book.woff") format('woff');
 }

@@ -21,7 +21,7 @@ GROUP_ITEM_THRESHOLD = int(sys.argv[5])
 GROUP_THRESHOLD = int(sys.argv[6])
 
 labels = [
-    {'id': 'centuries', 'label': 'Date Created', 'markers': []},
+    {'id': 'centuries', 'label': 'Century Created', 'markers': []},
     {'id': 'genres', 'label': 'Genre', 'markers': []},
     {'id': 'collections', 'label': 'Collection', 'markers': []},
     {'id': 'colors', 'label': 'Color', 'markers': []}
@@ -60,14 +60,16 @@ for i, l in enumerate(labels):
                 other['count'] += item['count']
             else:
                 url = item['url'] if 'url' in item else ''
+                height = getHeight(item['count'])
                 markers.append({
                     'label': item['label'],
                     'url': (item['url'] if 'url' in item else ''),
                     'count': item['count'],
                     'value': item['value'],
-                    'y': y
+                    'y': y,
+                    'h': height
                 })
-                y += getHeight(item['count'])
+                y += height
         # Add other
         if other['count']:
             other['y'] = y

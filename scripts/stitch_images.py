@@ -100,7 +100,7 @@ if len(groups) > 1:
     imageH = rows * ITEM_H
 
 # Create blank image
-print "Creating blank image at (" + str(imageW) + ", " + str(imageH) + ")"
+print "Creating blank image at (" + str(imageW) + " x " + str(imageH) + ")"
 imageBase = Image.new("RGB", (imageW, imageH), "black")
 
 for g in groups:

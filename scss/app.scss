@@ -153,9 +153,33 @@ button {
 
   .marker {
     position: relative;
-    overflow: hidden;
+    overflow: visible;
     border-bottom: 1px solid $grayDarker;
     @include box-sizing();
+
+    .marker-inner {
+      overflow: hidden;
+    }
+
+    &:before {
+      content: ' ';
+      width: $imageWidth;
+      height: 100%;
+      position: absolute;
+      top: -1000px;
+      left: -$imageWidth;
+      border-top: 1000px solid rgba($grayDarkest, 0.6);
+      border-bottom: 1000px solid rgba($grayDarkest, 0.6);
+      display: none;
+    }
+
+    &.active {
+      background: lighten($grayDarkest, 10%);
+      z-index: 75;
+      &:before {
+        display: block;
+      }
+    }
 
     &:after {
       content: ' ';

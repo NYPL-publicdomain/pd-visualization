@@ -98,9 +98,17 @@ var NYPLPD = (function() {
       $('.info').toggleClass('active');
     });
 
-    $('.nav-tabs').on('click', '.nav-tab', function(e){
+    $('#nav-tabs').on('click', '.nav-tab', function(e){
       e.preventDefault();
       _this.groupBy($(this).attr('data-group'));
+    });
+
+    $('#viz-markers').on('mouseover', '.marker-inner', function(e){
+      $(this).closest('.marker').addClass('active');
+    });
+
+    $('#viz-markers').on('mouseout', '.marker-inner', function(e){
+      $(this).closest('.marker').removeClass('active');
     });
 
   };
@@ -119,15 +127,18 @@ var NYPLPD = (function() {
       if (i<=0) $markers.addClass("active");
       $.each(label.markers, function(j, marker){
         var $marker,
-            markerClass = 'marker-' + +marker.value,
+            markerClass = 'marker-' + marker.value,
             markerLabel = marker.label + ' ('+marker.count+')';
         if (marker.count <= 300) markerClass += ' short';
         if (marker.url && marker.url.length) {
-          $marker = $('<div class="marker '+markerClass+'"><a href="'+marker.url+'" target="_blank" title="'+markerLabel+'">'+markerLabel+'</a></div>');
+          $marker = $('<div class="marker '+markerClass+'"><div class="marker-inner"><a href="'+marker.url+'" target="_blank" title="'+markerLabel+'">'+markerLabel+'</a></div></div>');
         } else {
-          $marker = $('<div class="marker '+markerClass+'"><span title="'+markerLabel+'">'+markerLabel+'</span></div>');
+          $marker = $('<div class="marker '+markerClass+'"><div class="marker-inner"><span title="'+markerLabel+'">'+markerLabel+'</span></div></div>');
         }
         $marker.css({
+          height: marker.h
+        });
+        $marker.children('div').css({
           height: marker.h
         });
         $markers.append($marker);

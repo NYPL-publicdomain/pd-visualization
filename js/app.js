@@ -13,8 +13,9 @@ var NYPLPD = (function() {
     this.images_loaded = $.Deferred();
     this.data_loaded = $.Deferred();
     this.labels_loaded = $.Deferred();
+    this.coords_loaded = $.Deferred();
 
-    $.when(this.images_loaded, this.data_loaded, this.labels_loaded).done(function() {
+    $.when(this.images_loaded, this.data_loaded, this.labels_loaded, this.coords_loaded).done(function() {
       $('.info-button').removeClass('loading');
       _this.loadUI();
       _this.loadListeners();
@@ -23,6 +24,7 @@ var NYPLPD = (function() {
     this.loadImages();
     this.loadData();
     this.loadLabels();
+    this.loadCoords();
   };
 
   NYPLPD.prototype.groupBy = function(groupId){
@@ -32,23 +34,38 @@ var NYPLPD = (function() {
     $('[data-group="'+groupId+'"]').addClass('active');
   };
 
+  NYPLPD.prototype.loadCoords = function(){
+    var _this = this;
+
+    this.coords = {};
+
+    $.getJSON("js/coords.json", function(data) {
+      _this.coords = data;
+      console.log('All coords loaded');
+      _this.coords_loaded.resolve();
+    });
+  };
+
   NYPLPD.prototype.loadData = function(){
     var _this = this,
-      groups = this.opt.item_data_groups,
-      item_groups = [];
+      groups = this.opt.item_data_groups;
 
-    this.items = []
+    this.item_groups = [];
+    this.items = [];
+    this.activeItem = false;
     this.groups_loaded = 0;
 
     // init groups
     for(var i=0; i<groups; i++) {
-      item_groups.push([]);
+      this.item_groups.push([]);
     }
 
     // get data for each group
     for(var i=0; i<groups; i++) {
       $.getJSON("js/items/items_"+i+"_"+groups+".json", function(data) {
-        item_groups[i] = data;
+        var items = data.items,
+            page = data.page;
+        _this.item_groups[page] = items;
 
         // Track group loaded
         _this.groups_loaded++;
@@ -57,7 +74,7 @@ var NYPLPD = (function() {
         if (_this.groups_loaded >= groups) {
           // merge all the groups into one
           for(var j=0; j<groups; j++) {
-            _this.items.concat(item_groups[j]);
+            _this.items = _this.items.concat(_this.item_groups[j]);
           }
           // all data is loaded
           console.log('All data loaded');
@@ -103,6 +120,19 @@ var NYPLPD = (function() {
       _this.groupBy($(this).attr('data-group'));
     });
 
+    $('#viz-images').on('mousemove', function(e){
+      _this.showItemInfoByEvent(e);
+    });
+
+    $('#viz-images').on('mouseout', function(e){
+      $('#item-info-box').removeClass('active');
+    });
+
+    $('#viz-images').on('click', function(e){
+      e.preventDefault();
+      _this.openItemByEvent(e);
+    });
+
   };
 
   NYPLPD.prototype.loadUI = function(){
@@ -141,6 +171,87 @@ var NYPLPD = (function() {
       });
       $('#viz-markers').append($markers);
     });
+  };
+
+  NYPLPD.prototype.openItemByEvent = function(evt){
+    var item = this.getItemByEvent(evt);
+
+    if (item) {
+      window.open("http://digitalcollections.nypl.org/items/" + item.uuid);
+    }
+  };
+
+  NYPLPD.prototype.showItem = function(item){
+    var uuid = item.uuid,
+        title = item.title,
+        captureId = item.captureId,
+        x = item.x,
+        y = item.y;
+
+    // already active
+    if (this.activeItem === uuid) return;
+    this.activeItem = uuid;
+
+    var $item = $('#item-info-box'),
+        $content = $('<div><img src="http://images.nypl.org/index.php?id='+captureId+'&t=t" /><h5>'+title+'</h5></div>')
+
+    // reset item el
+    $item.empty();
+    $item.css({
+      top: y,
+      left: x
+    });
+    $item.html($content);
+    $item.addClass('active');
+  };
+
+  NYPLPD.prototype.getItemByEvent = function(evt){
+    var $parent = $('#viz-images'),
+
+        // get mouse x/y relative to parent element
+        x = evt.pageX - $parent.offset().left,
+        y = evt.pageY - $parent.offset().top,
+
+        // init options
+        item_w = this.opt.item_w,
+        item_h = this.opt.item_h,
+        items_per_row = this.opt.items_per_row,
+
+        // get current active group
+        group_name = $('.nav-tab.active').first().attr('data-group'),
+        coords = this.coords[group_name],
+
+        // determine item row/col
+        item_col = Math.floor(x / item_w),
+        item_row = Math.floor(y / item_h),
+
+        // init item data
+        item_index = -1,
+        item = false;
+
+    // attempt to retrieve item info
+    item_index = coords[item_row*items_per_row + item_col];
+    if (item_index >= 0 && item_index < this.items.length){
+      var _item = this.items[item_index];
+      item = {
+        uuid: _item[0],
+        title: _item[1],
+        captureId: _item[2],
+        x: (item_col + 1) * item_w,
+        y: item_row * item_h
+      }
+    }
+
+    return item;
+  };
+
+  NYPLPD.prototype.showItemInfoByEvent = function(evt){
+    var item = this.getItemByEvent(evt);
+    if (item) {
+      this.showItem(item);
+    } else {
+      $('#item-info-box').removeClass('active');
+    }
   };
 
   return NYPLPD;

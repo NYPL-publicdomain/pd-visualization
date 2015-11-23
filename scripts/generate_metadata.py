@@ -61,5 +61,9 @@ for i in range(FILE_COUNT):
         start = end
         end += groupSize
     with open(fileName, 'w') as outfile:
-        json.dump(group, outfile)
+        data = {
+            'page': i,
+            'items': group
+        }
+        json.dump(data, outfile)
     print "Wrote " + str(len(group)) + " lines to " + fileName

@@ -130,11 +130,38 @@ button {
     position: absolute;
     top: 0;
     left: 0;
+    cursor: pointer;
     @include animation(fadeOut 1s);
 
     &.active {
       @include animation(fadeIn 1s);
     }
+  }
+}
+.item-info-box {
+  position: absolute;
+  z-index: 50;
+  top: 0;
+  left: 0;
+  background: rgba($grayDarkest, 0.8);
+  border-radius: 6px;
+  padding: 12px;
+  width: 150px;
+  display: none;
+
+  img {
+    width: 100%;
+    height: auto;
+    min-height: 50px;
+    background: url(../img/loading.gif) $black center center no-repeat;
+  }
+
+  h5 {
+    margin: 1em 0 0;
+  }
+
+  &.active {
+    display: block;
   }
 }
 

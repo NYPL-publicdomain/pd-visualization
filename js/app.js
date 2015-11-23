@@ -32,6 +32,7 @@ var NYPLPD = (function() {
 
     $('[data-group]').removeClass('active');
     $('[data-group="'+groupId+'"]').addClass('active');
+    this.stickyMarker();
   };
 
   NYPLPD.prototype.loadCoords = function(){
@@ -133,6 +134,10 @@ var NYPLPD = (function() {
       _this.openItemByEvent(e);
     });
 
+    $(window).on('scroll', function(){
+      _this.stickyMarker();
+    });
+
   };
 
   NYPLPD.prototype.loadUI = function(){
@@ -171,6 +176,8 @@ var NYPLPD = (function() {
       });
       $('#viz-markers').append($markers);
     });
+
+    this.stickyMarker();
   };
 
   NYPLPD.prototype.openItemByEvent = function(evt){
@@ -251,6 +258,33 @@ var NYPLPD = (function() {
       this.showItem(item);
     } else {
       $('#item-info-box').removeClass('active');
+    }
+  };
+
+  NYPLPD.prototype.stickyMarker = function(){
+    var $sticky = $('#sticky-content'),
+        scrollTop = $(window).scrollTop(),
+        padding = 28,
+        windowHeight = $(window).height(),
+        $markers = $('.markers.active').first().find('.marker'),
+        stickyActive = false;
+
+    $markers.each(function(){
+      var markerScrollTop = $(this).offset().top,
+          markerHeight = $(this).height();
+
+      if (markerScrollTop+padding < scrollTop && (markerScrollTop+markerHeight) > (scrollTop+windowHeight/4)) {
+        var $content = $(this).find('.marker-inner').html();
+        $sticky.html($content);
+        stickyActive = true;
+        return false;
+      }
+    });
+
+    if (stickyActive) {
+      $sticky.addClass('active');
+    } else {
+      $sticky.empty().removeClass('active');
     }
   };
 

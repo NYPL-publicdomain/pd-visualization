@@ -242,6 +242,19 @@ button {
   }
 }
 
+.sticky-content {
+  position: fixed;
+  top: 10px;
+  left: $imageWidth + 10px;
+  z-index: 100;
+  margin-right: $navWidth;
+  display: none;
+
+  &.active {
+    display: block;
+  }
+}
+
 .overlay {
   background: rgba($grayDarkest, 0.9);
   position: fixed;

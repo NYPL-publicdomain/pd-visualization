@@ -6,11 +6,10 @@
 
 body {
   font-family: "Kievit","Helvetica Neue","Helvetica",Helvetica,Arial,sans-serif;
-  background: $grayDarkest;
+  background: $grayDark;
   color: $white;
   margin: 0;
   padding: 0;
-  overflow: hidden;
 }
 
 a,
@@ -19,11 +18,15 @@ a:visited,
 a:hover,
 a:active {
   color: $blueLight;
+  text-decoration: none;
 }
 
 a:hover {
-  text-decoration: none;
   color: lighten($blueLight, 10%);
+}
+
+button {
+  outline: none;
 }
 
 .container {
@@ -37,11 +40,14 @@ a:hover {
   position: fixed;
   top: 0;
   right: 0;
+  overflow: visible;
 
   .nav {
     @include transform-origin(0 0);
-    @include transform(rotate(90degs));
+    @include transform(rotate(90deg) translateY(-$navWidth));
     @include clearfix();
+    position: absolute;
+    width: 2000px;
   }
 
   .nav-item {
@@ -59,6 +65,12 @@ a:hover {
 
   .nav-tab {
     cursor: pointer;
+
+    &.active {
+      background: $grayDarkest;
+      border-top-left-radius: 6px;
+      border-top-right-radius: 6px;
+    }
   }
 }
 
@@ -67,11 +79,16 @@ a:hover {
   width: auto;
   min-width: $imageWidth + $markerWidth;
   margin-right: $navWidth;
+  background: $grayDarkest;
+
   @include clearfix();
 }
 .viz-images {
   width: $imageWidth;
+  height: $imageHeight;
   float: left;
+  position: relative;
+  background: $black;
 
   .viz-image {
     width: 100%;
@@ -79,10 +96,10 @@ a:hover {
     position: absolute;
     top: 0;
     left: 0;
-    display: none;
+    @include animation(fadeOut 1s);
 
     &.active {
-      display: block;
+      @include animation(fadeIn 1s);
     }
   }
 }
@@ -101,17 +118,56 @@ a:hover {
   }
 
   .marker {
-    a, span {
+    overflow: hidden;
+    min-height: 10px;
+    border-bottom: 1px solid $grayDarker;
+
+    @include box-sizing();
+    @include transition(min-height 0.5s);
+
+    a,
+    span {
       display: block;
       margin: 0;
       padding: 10px;
-      border-top: 1px solid $grayDarker;
+      @include transition(padding 0.5s);
+    }
+
+    &:hover {
+      min-height: 40px;
+    }
+
+    &.short {
+      a,
+      span {
+        padding: 0 10px;
+        opacity: 0;
+      }
+      &:before {
+        line-height: 5px;
+        padding: 0 10px;
+        display: block;
+        content: '...';
+      }
+      &:hover {
+
+        &:before {
+          display: none;
+        }
+
+        a,
+        span {
+          opacity: 1;
+          padding: 10px;
+        }
+      }
+
     }
   }
 }
 
 .overlay {
-  background: rgba($grayDarkest, 0.8);
+  background: rgba($grayDarkest, 0.9);
   position: fixed;
   width: 100%;
   height: 100%;
@@ -119,20 +175,18 @@ a:hover {
   left: 0;
   z-index: 100;
   display: none;
-  @include animation(fadeOutDown 0.5s);
 
   &.active {
     display: block;
-    @include animation(fadeInUp 0.5s);
   }
 
   > div {
-    width: 40%;
+    width: 60%;
     margin: 0 auto;
     text-align: center;
     position: relative;
     top: 50%;
-    transform: translateY(-100%);
+    @include transform(translateY(-60%));
     color: $white;
     font-size: 1.6em;
     line-height: 2;
@@ -141,12 +195,13 @@ a:hover {
   .info-button {
     display: inline-block;
     padding: 0.3em 0.6em;
-    background: $blueLight;
+    background: $blue;
     color: $white;
     cursor: pointer;
+    border: none;
 
     &:hover {
-      background: lighten($blueLight, 10%);
+      background: lighten($blue, 10%);
     }
 
     &:before {

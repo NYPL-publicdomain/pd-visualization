@@ -15,6 +15,7 @@ var NYPLPD = (function() {
     this.labels_loaded = $.Deferred();
 
     $.when(this.images_loaded, this.data_loaded, this.labels_loaded).done(function() {
+      $('.info-button').removeClass('loading');
       _this.loadUI();
       _this.loadListeners();
     });
@@ -25,13 +26,16 @@ var NYPLPD = (function() {
   };
 
   NYPLPD.prototype.groupBy = function(groupId){
+    if ($('.nav-tab.active').attr('data-group')==groupId) return;
+
     $('[data-group]').removeClass('active');
-    $('[data-group="'+groupId+'"]').removeClass('active');
+    $('[data-group="'+groupId+'"]').addClass('active');
   };
 
   NYPLPD.prototype.loadData = function(){
-    var groups = this.opt.item_data_groups;
-    var item_groups = [];
+    var _this = this,
+      groups = this.opt.item_data_groups,
+      item_groups = [];
 
     this.items = []
     this.groups_loaded = 0;
@@ -43,7 +47,7 @@ var NYPLPD = (function() {
 
     // get data for each group
     for(var i=0; i<groups; i++) {
-      $.getJSON("js/items/"+i+"_"+groups+".json", function(data) {
+      $.getJSON("js/items/items_"+i+"_"+groups+".json", function(data) {
         item_groups[i] = data;
 
         // Track group loaded
@@ -91,7 +95,7 @@ var NYPLPD = (function() {
 
     $('.info-button').on('click', function(e){
       e.preventDefault();
-      $('.info').toggeClass('active');
+      $('.info').toggleClass('active');
     });
 
     $('.nav-tabs').on('click', '.nav-tab', function(e){
@@ -114,11 +118,14 @@ var NYPLPD = (function() {
       var $markers = $('<div data-group="'+label.id+'" class="markers"></div>');
       if (i<=0) $markers.addClass("active");
       $.each(label.markers, function(j, marker){
-        var $marker;
+        var $marker,
+            markerClass = 'marker-' + +marker.value,
+            markerLabel = marker.label + ' ('+marker.count+')';
+        if (marker.count <= 100) markerClass += ' short';
         if (marker.url && marker.url.length) {
-          $marker = $('<div class="marker marker-'+marker.value+'"><a href="'+marker.url+'" target="_blank">'+marker.label+'</a></div>');
+          $marker = $('<div class="marker '+markerClass+'"><a href="'+marker.url+'" target="_blank">'+markerLabel+'</a></div>');
         } else {
-          $marker = $('<div class="marker marker-'+marker.value+'"><span>'+marker.label+'</span></div>');
+          $marker = $('<div class="marker '+markerClass+'"><span>'+markerLabel+'</span></div>');
         }
         $marker.css({
           height: marker.h

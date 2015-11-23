@@ -28,7 +28,7 @@ indexH = 0
 
 # Create blank image
 print "Creating blank image at (" + str(imageW) + " x " + str(imageH) + ")"
-imageBase = Image.new("RGB", (imageW, imageH), "white")
+imageBase = Image.new("RGB", (imageW, imageH), "black")
 
 # For creating pseudo-random numbers
 def halton(index, base):
@@ -52,7 +52,7 @@ for step in range(STEPS):
         x0 = stepW * (STEPS-1)
         for ssstep in range(sssteps):
             # draw box at x+x0,y
-            img = Image.new("RGB", (ITEM_W, ITEM_H), "black")
+            img = Image.new("RGB", (ITEM_W, ITEM_H), "white")
             imageBase.paste(img, (int(x+x0), int(y)))
             x0 -= stepW
     sssteps -= 1

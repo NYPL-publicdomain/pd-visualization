@@ -145,3 +145,11 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+@mixin mask($params) {
+  -webkit-mask: $params;
+  mask: $params;
+}
+@mixin mask-position($params) {
+  -webkit-mask-position: $params;
+  mask-position: $params;
+}

@@ -103,14 +103,6 @@ var NYPLPD = (function() {
       _this.groupBy($(this).attr('data-group'));
     });
 
-    $('#viz-markers').on('mouseover', '.marker-inner', function(e){
-      $(this).closest('.marker').addClass('active');
-    });
-
-    $('#viz-markers').on('mouseout', '.marker-inner', function(e){
-      $(this).closest('.marker').removeClass('active');
-    });
-
   };
 
   NYPLPD.prototype.loadUI = function(){
@@ -138,8 +130,12 @@ var NYPLPD = (function() {
         $marker.css({
           height: marker.h
         });
-        $marker.children('div').css({
+        $marker.find('.marker-inner').css({
           height: marker.h
+        }).hoverIntent(function(){
+          $marker.addClass('active');
+        }, function(){
+          $marker.removeClass('active');
         });
         $markers.append($marker);
       });

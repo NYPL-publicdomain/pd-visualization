@@ -2,11 +2,11 @@
 
 # Description: stitches together item captures into one image
 # Example usage:
-#   python stitch_images.py ../data/ ../img/items/ ../img/ 100 10 10 default 50 20
-#   python stitch_images.py ../data/ ../img/items/ ../img/ 100 10 10 centuries 50 20
-#   python stitch_images.py ../data/ ../img/items/ ../img/ 100 10 10 collections 50 20
-#   python stitch_images.py ../data/ ../img/items/ ../img/ 100 10 10 colors 50 20
-#   python stitch_images.py ../data/ ../img/items/ ../img/ 100 10 10 genres 50 20
+#   python stitch_images.py ../data/ ../img/items/ ../img/ 100 10 10 default 50 20 3
+#   python stitch_images.py ../data/ ../img/items/ ../img/ 100 10 10 centuries 50 20 3
+#   python stitch_images.py ../data/ ../img/items/ ../img/ 100 10 10 collections 50 20 3
+#   python stitch_images.py ../data/ ../img/items/ ../img/ 100 10 10 colors 50 20 3
+#   python stitch_images.py ../data/ ../img/items/ ../img/ 100 10 10 genres 50 20 3
 
 from PIL import Image
 import json
@@ -15,8 +15,8 @@ import os
 import sys
 
 # input
-if len(sys.argv) < 9:
-    print "Usage: %s <inputdir of data> <inputdir of images> <outputdir for image> <images per row> <image cell width> <image cell height> <data group>  <group item threshold> <group threshold>" % sys.argv[0]
+if len(sys.argv) < 10:
+    print "Usage: %s <inputdir of data> <inputdir of images> <outputdir for image> <images per row> <image cell width> <image cell height> <data group>  <group item threshold> <group threshold> <min group rows>" % sys.argv[0]
     sys.exit(1)
 INPUT_DATA_DIR = sys.argv[1]
 INPUT_IMAGE_DIR = sys.argv[2]
@@ -27,6 +27,7 @@ ITEM_H =  int(sys.argv[6])
 DATA_GROUP = sys.argv[7]
 GROUP_ITEM_THRESHOLD = int(sys.argv[8])
 GROUP_THRESHOLD = int(sys.argv[9])
+MIN_GROUP_ROWS = int(sys.argv[10])
 
 # config
 imageExt = "jpg"
@@ -96,7 +97,10 @@ imageH = rows * ITEM_H
 if len(groups) > 1:
     rows = 0
     for g in groups:
-        rows += int(math.ceil(1.0 * g['count'] / ITEMS_PER_ROW))
+        group_rows = int(math.ceil(1.0 * g['count'] / ITEMS_PER_ROW))
+        if group_rows < MIN_GROUP_ROWS:
+            group_rows = MIN_GROUP_ROWS
+        rows += group_rows
     imageH = rows * ITEM_H
 
 # Create blank image
@@ -105,6 +109,7 @@ imageBase = Image.new("RGB", (imageW, imageH), "black")
 
 for g in groups:
     items = g['items']
+    extra_rows = max(MIN_GROUP_ROWS - int(math.ceil(1.0 * g['count'] / ITEMS_PER_ROW)), 0)
 
     for itemId in items:
         captureId = captures[itemId]
@@ -135,6 +140,10 @@ for g in groups:
             skipCount += 1
         x += ITEM_W
         count += 1
+
+    # Add extra rows for small groups
+    for extra_row in range(extra_rows):
+        y += ITEM_H
 
     # Go to the next line for the next group
     x = 0

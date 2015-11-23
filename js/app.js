@@ -121,11 +121,11 @@ var NYPLPD = (function() {
         var $marker,
             markerClass = 'marker-' + +marker.value,
             markerLabel = marker.label + ' ('+marker.count+')';
-        if (marker.count <= 100) markerClass += ' short';
+        if (marker.count <= 300) markerClass += ' short';
         if (marker.url && marker.url.length) {
-          $marker = $('<div class="marker '+markerClass+'"><a href="'+marker.url+'" target="_blank">'+markerLabel+'</a></div>');
+          $marker = $('<div class="marker '+markerClass+'"><a href="'+marker.url+'" target="_blank" title="'+markerLabel+'">'+markerLabel+'</a></div>');
         } else {
-          $marker = $('<div class="marker '+markerClass+'"><span>'+markerLabel+'</span></div>');
+          $marker = $('<div class="marker '+markerClass+'"><span title="'+markerLabel+'">'+markerLabel+'</span></div>');
         }
         $marker.css({
           height: marker.h

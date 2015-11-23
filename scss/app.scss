@@ -55,7 +55,8 @@ button {
     float: left;
     height: $navWidth - 10px;
     line-height: $navWidth - 10px;
-    margin: 10px 20px 0 0;
+    margin: 10px 0 0 0;
+
     padding: 0 20px;
   }
 
@@ -65,11 +66,44 @@ button {
 
   .nav-tab {
     cursor: pointer;
+    border: 1px solid darken($grayDark, 10%);
+    border-bottom: none;
+    border-left: none;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    @include box-sizing();
+    @include transition(background 0.5s);
 
-    &.active {
+    &:first-child {
+      border-left: 1px solid darken($grayDark, 10%);
+    }
+
+    &:hover {
+      background: lighten($grayDark, 10%);
+    }
+
+    &.active,
+    &.active:hover {
       background: $grayDarkest;
-      border-top-left-radius: 6px;
-      border-top-right-radius: 6px;
+      border-color: $grayDarkest;
+    }
+  }
+
+  .info-button {
+    width: 30px;
+    height: 30px;
+    line-height: 34px;
+    margin-top: $navWidth - 40px;
+    margin-left: 10px;
+    padding: 0;
+    background: $blue;
+    color: $white;
+    border-radius: 15px;
+    text-align: center;
+    @include transform(rotate(-90deg));
+
+    &:hover {
+      background: lighten($blue, 10%);
     }
   }
 }

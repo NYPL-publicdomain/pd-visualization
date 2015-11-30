@@ -24,6 +24,9 @@ $highlight:             #f9f6b8;
 // Layout
 // -------------------------
 $navWidth:              60px;
+$mapWidth:              60px;
+$mapWidthMin:           20px;
 $imageWidth:            1000px;
 $imageHeight:           16500px;
 $markerWidth:           200px;
+$mapMaxBreak:           $imageWidth + $markerWidth + $navWidth + $mapWidth;

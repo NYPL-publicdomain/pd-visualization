@@ -39,7 +39,7 @@ button {
   height: 100%;
   position: fixed;
   top: 0;
-  right: 0;
+  right: $mapWidthMin;
   overflow: visible;
 
   .nav {
@@ -108,13 +108,61 @@ button {
   }
 }
 
+.map-container {
+  width: $mapWidthMin;
+  height: 100%;
+  background: $grayDarkest;
+  position: fixed;
+  top: 0;
+  right: 0;
+  overflow: hidden;
+  z-index: 80;
+  @include transition(width 0.5s);
+
+  &:hover {
+    width: $mapWidth;
+  }
+
+  .map {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+  }
+
+  .map-window {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 60px;
+    width: 100%;
+    cursor: ns-resize;
+    @include box-shadow(0px 0px 0px 1000px rgba($grayDarkest, 0.5));
+  }
+
+  img {
+    width: auto;
+    height: 100%;
+    min-width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    @include animation(fadeOut 1s);
+
+    &.active {
+      @include animation(fadeIn 1s);
+    }
+  }
+}
+
 .viz-container {
   position: relative;
   width: auto;
   min-width: $imageWidth + $markerWidth;
-  margin-right: $navWidth;
+  margin-right: $navWidth + $mapWidthMin;
   background: $grayDarkest;
-
+  @include transform-origin(0 0);
   @include clearfix();
 }
 .viz-images {
@@ -247,7 +295,7 @@ button {
   top: 10px;
   left: $imageWidth + 10px;
   z-index: 100;
-  margin-right: $navWidth;
+  margin-right: $navWidth + $mapWidthMin;
   display: none;
 
   &.active {
@@ -309,6 +357,22 @@ button {
         content: 'Loading...'
       }
     }
+  }
+}
+
+/* Big Screens */
+@media screen and (min-width: $mapMaxBreak) {
+  .nav-container {
+    right: $mapWidth;
+  }
+  .map-container {
+    width: $mapWidth;
+  }
+  .viz-container {
+    margin-right: $navWidth + $mapWidth;
+  }
+  .sticky-content {
+    margin-right: $navWidth + $mapWidth;
   }
 }
 

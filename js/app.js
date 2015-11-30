@@ -32,7 +32,13 @@ var NYPLPD = (function() {
 
     $('[data-group]').removeClass('active');
     $('[data-group="'+groupId+'"]').addClass('active');
+
     this.stickyMarker();
+    this.updateMapWindow();
+  };
+
+  NYPLPD.prototype.isLargeScreen = function(){
+    return $('#large-breakpoint').css('display') == 'block';
   };
 
   NYPLPD.prototype.loadCoords = function(){
@@ -135,8 +141,22 @@ var NYPLPD = (function() {
       _this.openItemByEvent(e);
     });
 
+    $('#map-window').draggable({
+      containment: 'parent',
+      axis: 'y',
+      drag: function(e, ui) {
+        _this.onMapWindowDrag(e, ui);
+      }
+    });
+
     $(window).on('scroll', function(){
       _this.stickyMarker();
+      _this.updateMapWindow();
+    });
+
+    $(window).on('resize', function(){
+      _this.stickyMarker();
+      _this.updateMapWindow();
     });
 
   };
@@ -179,6 +199,17 @@ var NYPLPD = (function() {
     });
 
     this.stickyMarker();
+    this.updateMapWindow();
+  };
+
+  NYPLPD.prototype.onMapWindowDrag = function(evt, ui){
+    var elTop = ui.position.top,
+        windowHeight = $(window).height(),
+        imageHeight = $('.viz-image.active').height(),
+        percentTop = elTop / windowHeight,
+        top = imageHeight * percentTop;
+
+    $(window).scrollTop(top);
   };
 
   NYPLPD.prototype.openItemByEvent = function(evt){
@@ -287,6 +318,22 @@ var NYPLPD = (function() {
     } else {
       $sticky.empty().removeClass('active');
     }
+  };
+
+  NYPLPD.prototype.updateMapWindow = function(){
+    // update height
+    var $mapWindow = $('#map-window'),
+        windowHeight = $(window).height(),
+        imageHeight = $('.viz-image.active').height(),
+        percentHeight = windowHeight / imageHeight * 100;
+
+    $mapWindow.height(percentHeight + '%');
+
+    // update top
+    var scrollTop = $(window).scrollTop(),
+        percentTop = scrollTop / imageHeight * 100;
+
+    $mapWindow.css('top', percentTop + '%');
   };
 
   return NYPLPD;

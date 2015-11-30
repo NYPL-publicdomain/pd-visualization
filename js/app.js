@@ -15,6 +15,8 @@ var NYPLPD = (function() {
     this.labels_loaded = $.Deferred();
     this.coords_loaded = $.Deferred();
 
+    this.transformAmount = 1;
+
     $.when(this.images_loaded, this.data_loaded, this.labels_loaded, this.coords_loaded).done(function() {
       $('.info-button').removeClass('loading');
       _this.loadUI();
@@ -35,10 +37,6 @@ var NYPLPD = (function() {
 
     this.stickyMarker();
     this.updateMapWindow();
-  };
-
-  NYPLPD.prototype.isLargeScreen = function(){
-    return $('#large-breakpoint').css('display') == 'block';
   };
 
   NYPLPD.prototype.loadCoords = function(){
@@ -155,6 +153,7 @@ var NYPLPD = (function() {
     });
 
     $(window).on('resize', function(){
+      _this.updateVizSize();
       _this.stickyMarker();
       _this.updateMapWindow();
     });
@@ -176,7 +175,7 @@ var NYPLPD = (function() {
       $.each(label.markers, function(j, marker){
         var $marker,
             markerClass = 'marker-' + marker.value,
-            markerLabel = marker.label + ' ('+marker.count+')';
+            markerLabel = marker.label + ' ('+marker.count.toLocaleString()+')';
         if (marker.count <= 300) markerClass += ' short';
         if (marker.url && marker.url.length) {
           $marker = $('<div class="marker '+markerClass+'"><div class="marker-inner"><a href="'+marker.url+'" target="_blank" title="'+markerLabel+'">'+markerLabel+'</a></div></div>');
@@ -198,6 +197,7 @@ var NYPLPD = (function() {
       $('#viz-markers').append($markers);
     });
 
+    this.updateVizSize();
     this.stickyMarker();
     this.updateMapWindow();
   };
@@ -205,7 +205,7 @@ var NYPLPD = (function() {
   NYPLPD.prototype.onMapWindowDrag = function(evt, ui){
     var elTop = ui.position.top,
         windowHeight = $(window).height(),
-        imageHeight = $('.viz-image.active').height(),
+        imageHeight = $('.viz-image.active').height() * this.transformAmount,
         percentTop = elTop / windowHeight,
         top = imageHeight * percentTop;
 
@@ -252,8 +252,8 @@ var NYPLPD = (function() {
         y = evt.pageY - $parent.offset().top,
 
         // init options
-        item_w = this.opt.item_w,
-        item_h = this.opt.item_h,
+        item_w = this.opt.item_w * this.transformAmount,
+        item_h = this.opt.item_h * this.transformAmount,
         items_per_row = this.opt.items_per_row,
 
         // get current active group
@@ -276,8 +276,8 @@ var NYPLPD = (function() {
         uuid: _item[0],
         title: _item[1],
         captureId: _item[2],
-        x: (item_col + 1) * item_w,
-        y: item_row * item_h
+        x: (item_col + 1) * this.opt.item_w,
+        y: item_row * this.opt.item_h
       }
     }
 
@@ -324,7 +324,7 @@ var NYPLPD = (function() {
     // update height
     var $mapWindow = $('#map-window'),
         windowHeight = $(window).height(),
-        imageHeight = $('.viz-image.active').height(),
+        imageHeight = $('.viz-image.active').height() * this.transformAmount,
         percentHeight = windowHeight / imageHeight * 100;
 
     $mapWindow.height(percentHeight + '%');
@@ -334,6 +334,42 @@ var NYPLPD = (function() {
         percentTop = scrollTop / imageHeight * 100;
 
     $mapWindow.css('top', percentTop + '%');
+  };
+
+  NYPLPD.prototype.updateVizSize = function(){
+    var $el = $('#viz'),
+        elWidth = $el.width(),
+        largeScreenWidth = this._largeScreenWidth(),
+        windowWidth = $(window).width(),
+        widthDiff = largeScreenWidth - windowWidth;
+
+    if (widthDiff <= 0) {
+      this._transform($el, '');
+      this.transformAmount = 1;
+      return false;
+    }
+
+    var transformAmount = (elWidth - widthDiff) / elWidth;
+    this.transformAmount = transformAmount;
+    this._transform($el, 'scale('+transformAmount+')');
+  };
+
+  NYPLPD.prototype._isLargeScreen = function(){
+    return $('#large-breakpoint').css('display') == 'block';
+  };
+
+  NYPLPD.prototype._largeScreenWidth = function(){
+    return $('#large-breakpoint').width();
+  };
+
+  NYPLPD.prototype._transform = function($el, params){
+    $el.css({
+      '-webkit-transform' : params,
+      '-moz-transform'    : params,
+      '-ms-transform'     : params,
+      '-o-transform'      : params,
+      'transform'         : params
+    });
   };
 
   return NYPLPD;

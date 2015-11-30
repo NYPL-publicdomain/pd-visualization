@@ -6,7 +6,7 @@
 
 body {
   font-family: "Kievit","Helvetica Neue","Helvetica",Helvetica,Arial,sans-serif;
-  background: $grayDark;
+  background: $grayDarkest;
   color: $white;
   margin: 0;
   padding: 0;
@@ -41,6 +41,7 @@ button {
   top: 0;
   right: $mapWidthMin;
   overflow: visible;
+  background: $grayDark;
 
   .nav {
     @include transform-origin(0 0);
@@ -297,6 +298,7 @@ button {
   z-index: 100;
   margin-right: $navWidth + $mapWidthMin;
   display: none;
+  @include transform(scale(1));
 
   &.active {
     display: block;
@@ -373,6 +375,21 @@ button {
   }
   .sticky-content {
     margin-right: $navWidth + $mapWidth;
+  }
+}
+
+#large-breakpoint {
+  display: block;
+  opacity: 0;
+  width: $mapMaxBreak;
+  height: 0;
+  z-index: -1;
+}
+
+/* Medium to Small Screens */
+@media screen and (max-width: $mapMaxBreak - 1) {
+  #large-breakpoint {
+    display: none;
   }
 }
 

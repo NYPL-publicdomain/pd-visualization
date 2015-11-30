@@ -113,6 +113,7 @@ var NYPLPD = (function() {
 
     $('.info-button').on('click', function(e){
       e.preventDefault();
+      if ($('#loading-button').hasClass('loading')) return false;
       $('.info').toggleClass('active');
     });
 

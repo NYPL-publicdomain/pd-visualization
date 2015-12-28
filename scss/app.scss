@@ -67,26 +67,20 @@ button {
 
   .nav-tab {
     cursor: pointer;
-    border: 1px solid darken($grayDark, 10%);
-    border-bottom: none;
-    border-left: none;
     border-top-left-radius: 6px;
     border-top-right-radius: 6px;
+    background: lighten($grayDark, 10%);
+    margin-right: 1px;
     @include box-sizing();
     @include transition(background 0.5s);
 
-    &:first-child {
-      border-left: 1px solid darken($grayDark, 10%);
-    }
-
     &:hover {
-      background: lighten($grayDark, 10%);
+      background: lighten($grayDark, 15%);
     }
 
     &.active,
     &.active:hover {
       background: $grayDarkest;
-      border-color: $grayDarkest;
     }
   }
 

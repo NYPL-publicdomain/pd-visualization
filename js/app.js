@@ -35,8 +35,9 @@ var NYPLPD = (function() {
     $('[data-group]').removeClass('active');
     $('[data-group="'+groupId+'"]').addClass('active');
 
-    this.stickyMarker();
-    this.updateMapWindow();
+    // this.stickyMarker();
+    // this.updateMapWindow();
+    this.scrollToTop();
   };
 
   NYPLPD.prototype.loadCoords = function(){
@@ -282,6 +283,10 @@ var NYPLPD = (function() {
     }
 
     return item;
+  };
+
+  NYPLPD.prototype.scrollToTop = function(){
+    $("html, body").animate({ scrollTop: 0 });
   };
 
   NYPLPD.prototype.showItemInfoByEvent = function(evt){

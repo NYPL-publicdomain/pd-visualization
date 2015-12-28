@@ -32,13 +32,14 @@ button {
 .container {
   width: 100%;
   position: relative;
+  margin-top: $headerHeight;
 }
 
 .nav-container {
   width: $navWidth;
   height: 100%;
   position: fixed;
-  top: 0;
+  top: $headerHeight;
   right: $mapWidthMin;
   overflow: visible;
   background: $grayDark;
@@ -108,7 +109,7 @@ button {
   height: 100%;
   background: $grayDarkest;
   position: fixed;
-  top: 0;
+  top: $headerHeight;
   right: 0;
   overflow: hidden;
   z-index: 80;
@@ -353,6 +354,34 @@ button {
         content: 'Loading...'
       }
     }
+  }
+}
+
+.nypl-header {
+  width: 100%;
+  height: $headerHeight;
+  line-height: $headerHeight;
+  background: #1a404f;
+  position: fixed;
+  z-index: 1000000;
+  top: 0;
+  left: 0;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 16px;
+
+  .lion {
+    display: inline-block;
+    background: transparent url(../img/NYPL_logo1_white_rev.svg) left center no-repeat;
+    background-size: contain;
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+    font-size: 1px;
+    color: #1a404f;
+    vertical-align: middle;
   }
 }
 

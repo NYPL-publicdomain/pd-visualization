@@ -5,6 +5,7 @@
 #   python get_colors.py ../data/item_hsl.json ../data/colors.json ../data/item_colors.json
 
 from colour import Color
+import copy
 import json
 import math
 from pprint import pprint
@@ -43,7 +44,7 @@ with open(INPUT_FILE) as data_file:
 itemCount = len(items)
 print "Loaded " + str(itemCount) + " items..."
 
-def getNearestColor(c, color_list):
+def getNearestColor(c, the_list):
     global black_luminance_threshold
     global white_luminance_threshold
 
@@ -52,7 +53,7 @@ def getNearestColor(c, color_list):
     luminance = c[2]
 
     # Create a copy
-    color_list = color_list[:]
+    color_list = copy.deepcopy(the_list)
 
     # Check for black
     if luminance < black_luminance_threshold:
@@ -80,13 +81,17 @@ def getNearestColor(c, color_list):
     return color_list[min_color_i]
 
 # analyze colors
-for i, hsl in enumerate(items):
+for i, weighted_hsl in enumerate(items):
+    hsl = []
+    weight = 0
     nearest_color = next(iter([_c for _c in colors if _c['label']=='Unknown']))
-    if len(hsl) > 0:
+    if len(weighted_hsl) > 0 and len(weighted_hsl[0]) > 0:
+        hsl = weighted_hsl[0]
+        weight = weighted_hsl[1]
         nearest_color = getNearestColor(hsl, colors)
 
     colors[nearest_color['index']]['count'] += 1
-    item_colors.append(nearest_color['index'])
+    item_colors.append([nearest_color['index'], weight])
 
     sys.stdout.write('\r')
     sys.stdout.write(str(round(1.0*i/itemCount*100,3))+'%')

@@ -39,6 +39,16 @@ with open(INPUT_DATA_DIR + "captures.json") as data_file:
 itemCount = len(captures)
 print "Loaded " + str(itemCount) + " captures..."
 
+def getItemsIds(the_group, the_items):
+    ids = []
+    if isinstance(the_items[0], list):
+        items = [{'id': item_i, 'score': group_value[1]} for item_i, group_value in enumerate(the_items) if group_value[0] == the_group['index']]
+        items = sorted(items, key=lambda k: k['score'], reverse=True)
+        ids = [i['id'] for i in items]
+    else:
+        ids = [item_i for item_i, group_i in enumerate(the_items) if group_i == the_group['index']]
+    return ids
+
 # init groups
 groups = []
 item_groups = []
@@ -59,7 +69,7 @@ if os.path.isfile(group_filename) and os.path.isfile(items_group_filename):
     # Add items to appropriate groups
     for i,g in enumerate(_groups):
         if g['value']:
-            item_ids = [item_i for item_i, group_i in enumerate(item_groups) if group_i == g['index']]
+            item_ids = getItemsIds(g, item_groups)
             # this group is too small; add to "other" group
             if g['count'] < GROUP_ITEM_THRESHOLD and len(_groups) > GROUP_THRESHOLD:
                 other['items'].extend(item_ids)
@@ -73,7 +83,7 @@ if os.path.isfile(group_filename) and os.path.isfile(items_group_filename):
 
     # Add "uknown" group
     if unknown:
-        unknown['items'] = [item_i for item_i, group_i in enumerate(item_groups) if group_i == unknown['index']]
+        unknown['items'] = getItemsIds(unknown, item_groups)
         groups.append(unknown)
 else:
     # Put everything in one big group

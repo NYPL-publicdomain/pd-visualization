@@ -31,6 +31,16 @@ coords = {
     'colors': []
 }
 
+def getItemsIds(the_group, the_items):
+    ids = []
+    if isinstance(the_items[0], list):
+        items = [{'id': item_i, 'score': group_value[1]} for item_i, group_value in enumerate(the_items) if group_value[0] == the_group['index']]
+        items = sorted(items, key=lambda k: k['score'], reverse=True)
+        ids = [i['id'] for i in items]
+    else:
+        ids = [item_i for item_i, group_i in enumerate(the_items) if group_i == the_group['index']]
+    return ids
+
 def getGroups(groupName):
     global INPUT_DATA_DIR
     global GROUP_ITEM_THRESHOLD
@@ -54,7 +64,7 @@ def getGroups(groupName):
     # Add items to appropriate groups
     for i,g in enumerate(_groups):
         if g['value']:
-            item_ids = [item_i for item_i, group_i in enumerate(item_groups) if group_i == g['index']]
+            item_ids = getItemsIds(g, item_groups)
             # this group is too small; add to "other" group
             if g['count'] < GROUP_ITEM_THRESHOLD and len(_groups) > GROUP_THRESHOLD:
                 other['items'].extend(item_ids)
@@ -68,7 +78,7 @@ def getGroups(groupName):
 
     # Add "uknown" group
     if unknown:
-        unknown['items'] = [item_i for item_i, group_i in enumerate(item_groups) if group_i == unknown['index']]
+        unknown['items'] = getItemsIds(unknown, item_groups)
         groups.append(unknown)
 
     return groups

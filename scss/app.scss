@@ -288,7 +288,7 @@ button {
 
 .sticky-content {
   position: fixed;
-  top: 10px;
+  top: $headerHeight + 10px;
   left: $imageWidth + 10px;
   z-index: 100;
   margin-right: $navWidth + $mapWidthMin;

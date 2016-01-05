@@ -68,7 +68,7 @@ def addGenre(g):
         url = ''
         if g:
             label = g.capitalize()
-            url = 'http://digitalcollections.nypl.org/search/index?filters%5Bgenre%5D=' + urllib.quote(label)
+            url = 'http://digitalcollections.nypl.org/search/index?utf8=✓&keywords=&filters%5Brights%5D=pd&filters%5Bgenre%5D=' + urllib.quote(label)
         genre = {
             'index': len(genres),
             'value': g,

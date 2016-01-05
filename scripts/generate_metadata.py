@@ -18,9 +18,6 @@ INPUT_FILE = sys.argv[1]
 OUTPUT_DIR = sys.argv[2]
 FILE_COUNT = int(sys.argv[3])
 
-# config
-imageURLPattern = '^http://images\.nypl\.org/index\.php\?id=([^&]+)&t=g$'
-
 # init
 items = []
 
@@ -28,23 +25,29 @@ for line in open(INPUT_FILE,'r').readlines():
     # Read line as json
     item = json.loads(line)
 
+    # Retrieve capture id of item's first capture
+    captureId = ""
+    if "captureIds" in item and len(item["captureIds"]) > 0:
+        captureId = item["captureIds"][0].strip()
+
     # Retrieve UUID
     uuid = ""
-    if "UUID" in item and item["UUID"]:
-        uuid = item["UUID"].strip()
+    if "captures" in item and len(item["captures"]) > 0:
+        capture = False
+        if captureId:
+            capture = next(iter([_c for _c in item["captures"] if _c['imageId']==captureId]), False)
+
+        if not capture:
+            capture = item["captures"][0]
+
+        uuid = capture["uuid"].strip()
 
     # Retrieve title
     title = ""
     if "title" in item and item["title"]:
         title = item["title"].encode("utf-8").strip()
 
-    # Retrieve capture id of item's first capture
-    captureId = ""
-    if "captures" in item and len(item["captures"]) > 0:
-        capture = item["captures"][0]
-        match = re.search(imageURLPattern, capture)
-        if match:
-            captureId = match.group(1).strip()
+
 
     items.append([uuid, title, captureId])
 

@@ -22,12 +22,12 @@ OUTPUT_ITEMS_FILE = sys.argv[3]
 
 # config
 colors = [
-    {'index': 0, 'value': ['#ff0000', '#800080'], 'label': 'Red', 'count': 0},
-    {'index': 1, 'value': ['#008000'], 'label': 'Green', 'count': 0},
-    {'index': 2, 'value': ['#0000ff'], 'label': 'Blue', 'count': 0},
+    {'index': 0, 'value': ['#f00', '#f0f'], 'label': 'Red', 'count': 0},
+    {'index': 1, 'value': ['#0f0'], 'label': 'Green', 'count': 0},
+    {'index': 2, 'value': ['#00f'], 'label': 'Blue', 'count': 0},
     {'index': 3, 'value': ['#ffa500'], 'label': 'Orange', 'count': 0},
-    {'index': 4, 'value': ['#ffff00'], 'label': 'Yellow', 'count': 0},
-    {'index': 5, 'value': ['#8B4513'], 'label': 'Brown', 'count': 0},
+    {'index': 4, 'value': ['#ff0'], 'label': 'Yellow', 'count': 0},
+    {'index': 5, 'value': ['#e06f1f'], 'label': 'Brown', 'count': 0},
     {'index': 6, 'value': ['#777777'], 'label': 'Gray', 'count': 0},
     {'index': 7, 'value': ['#ffffff'], 'label': 'White', 'count': 0},
     {'index': 8, 'value': ['#000000'], 'label': 'Black', 'count': 0},
@@ -47,7 +47,7 @@ print "Loaded " + str(itemCount) + " items..."
 
 def distance_3d(a, b):
     global hue_weight
-    
+
     a = (a[0] * hue_weight, a[1], a[2])
     b = (b[0] * hue_weight, b[1], b[2])
     a = numpy.array(a)

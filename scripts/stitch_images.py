@@ -2,11 +2,13 @@
 
 # Description: stitches together item captures into one image
 # Example usage:
-#   python stitch_images.py ../data/ ../img/items/ ../img/ 100 10 10 default 50 20 3 1
-#   python stitch_images.py ../data/ ../img/items/ ../img/ 100 10 10 centuries 50 20 3 1
-#   python stitch_images.py ../data/ ../img/items/ ../img/ 100 10 10 collections 50 20 3 1
-#   python stitch_images.py ../data/ ../img/items/ ../img/ 100 10 10 colors 50 20 3 1
-#   python stitch_images.py ../data/ ../img/items/ ../img/ 100 10 10 genres 50 20 3 1
+#   python stitch_images.py ../data/ ../img/items/ ../img/ 100 10 10 default 50 20 3 30000
+#   python stitch_images.py ../data/ ../img/items/ ../img/ 100 10 10 centuries 50 20 3 30000
+#   python stitch_images.py ../data/ ../img/items/ ../img/ 100 10 10 collections 50 20 3 30000
+#   python stitch_images.py ../data/ ../img/items/ ../img/ 100 10 10 colors 50 20 3 30000
+#   python stitch_images.py ../data/ ../img/items/ ../img/ 100 10 10 genres 50 20 3 30000
+
+#   python stitch_images.py ../data/ ../img/items/ ../img/ 100 80 80 colors 50 20 3 8000
 
 from PIL import Image
 import json
@@ -16,7 +18,7 @@ import sys
 
 # input
 if len(sys.argv) < 11:
-    print "Usage: %s <inputdir of data> <inputdir of images> <outputdir for image> <images per row> <image cell width> <image cell height> <data group>  <group item threshold> <group threshold> <min group rows> <number of output images>" % sys.argv[0]
+    print "Usage: %s <inputdir of data> <inputdir of images> <outputdir for image> <images per row> <image cell width> <image cell height> <data group>  <group item threshold> <group threshold> <min group rows> <max image height>" % sys.argv[0]
     sys.exit(1)
 INPUT_DATA_DIR = sys.argv[1]
 INPUT_IMAGE_DIR = sys.argv[2]
@@ -28,7 +30,7 @@ DATA_GROUP = sys.argv[7]
 GROUP_ITEM_THRESHOLD = int(sys.argv[8])
 GROUP_THRESHOLD = int(sys.argv[9])
 MIN_GROUP_ROWS = int(sys.argv[10])
-OUTPUT_IMAGE_COUNT = int(sys.argv[11])
+MAX_IMAGE_HEIGHT = int(sys.argv[11])
 
 # config
 imageExt = "jpg"
@@ -114,6 +116,9 @@ if len(groups) > 1:
         rows += group_rows
     imageH = rows * ITEM_H
 
+# Ensure under max height
+imageH = min(imageH, MAX_IMAGE_HEIGHT)
+
 # Create blank image
 print "Creating blank image at (" + str(imageW) + " x " + str(imageH) + ")"
 imageBase = Image.new("RGB", (imageW, imageH), "black")
@@ -128,6 +133,8 @@ for g in groups:
         if x >= imageW:
             x = 0
             y += ITEM_H
+            if y >= imageH:
+                break
         # Try to paste image
         if captureId:
             fileName = INPUT_IMAGE_DIR + captureId + "." + imageExt
@@ -159,6 +166,9 @@ for g in groups:
     # Go to the next line for the next group
     x = 0
     y += ITEM_H
+
+    if y >= imageH:
+        break
 
 # Save image
 print "Saving stiched image..."

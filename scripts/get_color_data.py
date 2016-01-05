@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Description: retrieves the dominant color of items
+# Description: retrieves the dominant color of item images
 # Example usage:
 #   python get_color_data.py ../data/captures.json ../img/items/ ../data/item_hsl.json 3
 

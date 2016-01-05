@@ -2,11 +2,11 @@
 
 # Description: stitches together item captures into one image
 # Example usage:
-#   python stitch_images.py ../data/ ../img/items/ ../img/ 100 10 10 default 50 20 3
-#   python stitch_images.py ../data/ ../img/items/ ../img/ 100 10 10 centuries 50 20 3
-#   python stitch_images.py ../data/ ../img/items/ ../img/ 100 10 10 collections 50 20 3
-#   python stitch_images.py ../data/ ../img/items/ ../img/ 100 10 10 colors 50 20 3
-#   python stitch_images.py ../data/ ../img/items/ ../img/ 100 10 10 genres 50 20 3
+#   python stitch_images.py ../data/ ../img/items/ ../img/ 100 10 10 default 50 20 3 1
+#   python stitch_images.py ../data/ ../img/items/ ../img/ 100 10 10 centuries 50 20 3 1
+#   python stitch_images.py ../data/ ../img/items/ ../img/ 100 10 10 collections 50 20 3 1
+#   python stitch_images.py ../data/ ../img/items/ ../img/ 100 10 10 colors 50 20 3 1
+#   python stitch_images.py ../data/ ../img/items/ ../img/ 100 10 10 genres 50 20 3 1
 
 from PIL import Image
 import json
@@ -15,8 +15,8 @@ import os
 import sys
 
 # input
-if len(sys.argv) < 10:
-    print "Usage: %s <inputdir of data> <inputdir of images> <outputdir for image> <images per row> <image cell width> <image cell height> <data group>  <group item threshold> <group threshold> <min group rows>" % sys.argv[0]
+if len(sys.argv) < 11:
+    print "Usage: %s <inputdir of data> <inputdir of images> <outputdir for image> <images per row> <image cell width> <image cell height> <data group>  <group item threshold> <group threshold> <min group rows> <number of output images>" % sys.argv[0]
     sys.exit(1)
 INPUT_DATA_DIR = sys.argv[1]
 INPUT_IMAGE_DIR = sys.argv[2]
@@ -28,6 +28,7 @@ DATA_GROUP = sys.argv[7]
 GROUP_ITEM_THRESHOLD = int(sys.argv[8])
 GROUP_THRESHOLD = int(sys.argv[9])
 MIN_GROUP_ROWS = int(sys.argv[10])
+OUTPUT_IMAGE_COUNT = int(sys.argv[11])
 
 # config
 imageExt = "jpg"
@@ -132,7 +133,7 @@ for g in groups:
             fileName = INPUT_IMAGE_DIR + captureId + "." + imageExt
             try:
                 im = Image.open(fileName)
-                im.thumbnail((ITEM_W, ITEM_H), Image.NEAREST)
+                im.thumbnail((ITEM_W, ITEM_H), Image.ANTIALIAS) # Image.NEAREST
                 imageBase.paste(im, (x, y))
                 # print "Pasted " + fileName
 

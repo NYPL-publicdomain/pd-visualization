@@ -20,6 +20,10 @@ INPUT_FILE = sys.argv[1]
 OUTPUT_FILE = sys.argv[2]
 OUTPUT_ITEMS_FILE = sys.argv[3]
 
+black_luminance_threshold = 0.2
+white_luminance_threshold = 0.8
+gray_saturation_threshold = 0.08
+
 # config
 colors = [
     {'index': 0, 'value': ['#f00', '#f0f'], 'label': 'Red', 'count': 0},
@@ -65,16 +69,20 @@ def getNearestColor(c, the_list):
     # Create a copy
     color_list = copy.deepcopy(the_list)
 
-    # # Check for black
-    # if luminance < black_luminance_threshold:
-    #     return next(iter([_c for _c in color_list if _c['label']=='Black']))
-    #
-    # # Check for white
-    # elif luminance > white_luminance_threshold and saturation < (1.0-white_luminance_threshold):
-    #     return next(iter([_c for _c in color_list if _c['label']=='White']))
-    #
-    # # Remove black and white from list
-    # color_list = [_c for _c in color_list if _c['value'] and _c['label']!='Black' and _c['label']!='White']
+    # Check for black
+    if luminance < black_luminance_threshold:
+        return next(iter([_c for _c in color_list if _c['label']=='Black']))
+
+    # Check for white
+    elif luminance > white_luminance_threshold:
+        return next(iter([_c for _c in color_list if _c['label']=='White']))
+
+    # Check for gray
+    elif saturation < gray_saturation_threshold:
+        return next(iter([_c for _c in color_list if _c['label']=='Gray']))
+
+    # Remove black/white/gray from list
+    color_list = [_c for _c in color_list if _c['value'][0] and _c['label']!='Black' and _c['label']!='White' and _c['label']!='Gray']
 
     # Find the color with the smallest distance in hue
     min_color_i = 0

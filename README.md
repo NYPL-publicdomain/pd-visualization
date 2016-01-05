@@ -15,7 +15,7 @@ To generate the images and data that powers the UI, a number of python scripts h
   - [get_genres.py](scripts/get_genres.py) retrieves the genres from the items
   - [get_collections.py](scripts/get_collections.py) retrieves the collections from the items
 3. Run [download_images.py](scripts/download_images.py) to download all the images of the first captures of the items
-4. Run [get_colors.py](scripts/get_colors.py) to get the colors from the images
+4. Run [get_color_data.py](scripts/get_color_data.py) and [get_colors.py](scripts/get_colors.py) to get the colors from the images
 5. Run [stitch_images.py](scripts/stitch_images.py) to stitch together the images for each item category
 6. The following scripts do some pre-processing for the UI:
   - [generate_metadata.py](scripts/generate_metadata.py) - loads all the metadata (title, description, uuid, etc) for the item thumbnail preview

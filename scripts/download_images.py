@@ -15,6 +15,7 @@
 
 import json
 import os
+from PIL import Image
 import sys
 import urllib2
 
@@ -37,6 +38,18 @@ successCount = 0
 skipCount = 0
 failCount = 0
 
+def isValidImage(fileName):
+    isValid = True
+    try:
+        im=Image.open(fileName)
+        # do stuff
+    except IOError:
+        # filename not an image file
+        isValid = False
+    except:
+        isValid = False
+    return isValid
+
 with open(INPUT_FILE) as data_file:
     items = json.load(data_file)
 itemCount = len(items)
@@ -46,7 +59,7 @@ for captureId in items:
     imageURL = imageURLPattern % captureId
     fileName = OUTPUT_DIR + captureId + "." + imageExt
     # save file if not found or overwrite is set to True
-    if overwriteExisting or not os.path.isfile(fileName):
+    if overwriteExisting or not os.path.isfile(fileName) or not isValidImage(fileName):
         with open(fileName, 'wb') as f:
             try:
                 f.write(urllib2.urlopen(imageURL).read())

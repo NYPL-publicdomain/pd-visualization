@@ -91,9 +91,16 @@ for line in open(INPUT_FILE,'r').readlines():
 
     # Retrieve date
     date = ""
-    if "date" in item and len(item["date"]) > 0:
-        for d in item["date"]:
-            year = getYearFromString(d)
+    if "dates" in item and len(item["dates"]) > 0:
+
+        # Give precedance to date created
+        itemDates = [d for d in item["dates"] if d['field']=='dateCreated']
+        if len(itemDates) <= 0:
+            itemDates = item["dates"]
+
+        # Look for the first valid year
+        for d in itemDates:
+            year = getYearFromString(d['value'])
             if year and year > minYear and year < maxYear:
                 date = year
                 if TIME_UNIT == 'century':

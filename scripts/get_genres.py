@@ -86,8 +86,8 @@ for line in open(INPUT_FILE,'r').readlines():
 
     # Retrieve genre
     genre = ""
-    if "genre" in item and len(item["genre"]) > 0:
-        for g in item["genre"]:
+    if "genres" in item and len(item["genres"]) > 0:
+        for g in item["genres"]:
             g = str(g["text"].encode("utf_8"))
             # Make lowercase exclude everything after divider
             g = g.lower().split(" -- ")[0]

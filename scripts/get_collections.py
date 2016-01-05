@@ -54,8 +54,8 @@ with codecs.open(INPUT_FILE, encoding='utf-8') as infile:
         item = json.loads(line)
 
         uuid = ""
-        if "collectionUUID" in item and item["collectionUUID"]:
-            uuid = item["collectionUUID"].strip()
+        if "collectionUuid" in item and item["collectionUuid"]:
+            uuid = item["collectionUuid"].strip()
 
         # Retrieve collection title
         title = ""

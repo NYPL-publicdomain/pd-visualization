@@ -32,14 +32,8 @@ for line in open(INPUT_FILE,'r').readlines():
 
     # Retrieve capture ids of item's first capture
     captureId = ""
-    if "captures" in item and len(item["captures"]) > 0:
-        capture = item["captures"][0]
-        match = re.search(imageURLPattern, capture)
-        if match:
-            captureId = match.group(1).strip()
-        if not captureId:
-            print "Invalid Image URL: " + capture
-            invalidCaptureCount += 1
+    if "captureIds" in item and len(item["captureIds"]) > 0:
+        captureId = item["captureIds"][0].strip()
     else:
         noCaptureCount += 1
 

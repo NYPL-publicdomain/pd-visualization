@@ -72,7 +72,10 @@ def addDate(d):
             label = str(d)
             url = 'http://digitalcollections.nypl.org/search/index?utf8=✓&keywords=&filters%5Brights%5D=pd&year_begin='+label+'&year_end='+label
             if TIME_UNIT == 'century':
-                label += "th century"
+                if d==21:
+                    label += "st century"
+                else:
+                    label += "th century"
                 url = 'http://digitalcollections.nypl.org/search/index?utf8=✓&keywords=&filters%5Brights%5D=pd&year_begin='+str(d-1)+'00&year_end='+str(d)+'00'
         date = {
             'index': len(dates),

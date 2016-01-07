@@ -134,7 +134,7 @@ button {
     height: 60px;
     width: 100%;
     cursor: ns-resize;
-    @include box-shadow(0px 0px 0px 1000px rgba($grayDarkest, 0.5));
+    @include box-shadow(0px 0px 0px 4000px rgba($grayDarkest, 0.5));
   }
 
   img {

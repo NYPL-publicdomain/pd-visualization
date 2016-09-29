@@ -8,7 +8,7 @@ View the visualization here: [http://publicdomain.nypl.org/pd-visualization/](ht
 
 To generate the images and data that powers the UI, a number of python scripts have been made to crunch the data
 
-1. Download a [data dump](https://github.com/NYPL-publicdomain/data-and-utilities) of NYPL items
+1. Download and unzip a [data dump](https://s3.amazonaws.com/labs.nypl.org/publicdomain/pd_mms_items.ndjson.gz) of NYPL items
 2. Run the following scripts to extract necessary item categories
   - [get_captures.py](scripts/get_captures.py) retrieves capture ids to retrieve the images
   - [get_dates.py](scripts/get_dates.py) retrieves the creation dates from the items
@@ -25,9 +25,9 @@ To generate the images and data that powers the UI, a number of python scripts h
 ---
 ### About the NYPL Public Domain Release
 
-On January 6, 2016, The New York Public Library enhanced access to public domain items in Digital Collections so that everyone has the freedom to enjoy and reuse these materials in almost limitless ways. For all such items the Library now makes it possible to download the highest resolution images available directly from the [Digital Collections](http://digitalcollections.nypl.org) website. 
+On January 6, 2016, The New York Public Library enhanced access to public domain items in Digital Collections so that everyone has the freedom to enjoy and reuse these materials in almost limitless ways. For all such items the Library now makes it possible to download the highest resolution images available directly from the [Digital Collections](http://digitalcollections.nypl.org) website.
 
-That means more than 187,000 items free to use without restriction! But we know that 180K of anything is a lot to get your head around — so as a way to introduce you to these collections and inspire new works, NYPL Labs developed a suite of [projects and tools](http://nypl.org/publicdomain) to help you explore the vast collections and dive deep into specific ones. 
+That means more than 187,000 items free to use without restriction! But we know that 180K of anything is a lot to get your head around — so as a way to introduce you to these collections and inspire new works, NYPL Labs developed a suite of [projects and tools](http://nypl.org/publicdomain) to help you explore the vast collections and dive deep into specific ones.
 
 Go forth, reuse, and let us know what you made with the #nyplremix hashtag! For more information:
 

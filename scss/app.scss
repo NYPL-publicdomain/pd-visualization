@@ -37,7 +37,7 @@ button {
 
 .archive-banner {
   width: 100%;
-  height: 110px;
+  height: 50px;
   background: #F9E08E;
   position: fixed;
   z-index: 100000;
@@ -382,7 +382,7 @@ button {
   background: #1a404f;
   position: fixed;
   z-index: 1000000;
-  top: 0;
+  top: 72px;
   left: 0;
   text-align: center;
   overflow: hidden;
@@ -428,7 +428,7 @@ button {
 }
 
 /* Medium to Small Screens */
-@media screen and (max-width: $mapMaxBreak-1) {
+@media screen and (max-width: ($mapMaxBreak - 1)) {
   #large-breakpoint {
     display: none;
   }

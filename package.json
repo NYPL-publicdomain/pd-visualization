@@ -1,0 +1,15 @@
+{
+  "name": "pd-visualization",
+  "description": "Visualizing the PD",
+  "scripts": {
+    "start": "node server.js",
+    "build": "sass",
+    "watch": "sass --watch scss:css"
+  },
+  "devDependencies": {
+    "express": "^4.16.4"
+  },
+  "dependencies": {
+    "sass": "1.80.6"
+  }
+}

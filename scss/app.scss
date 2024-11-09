@@ -35,6 +35,24 @@ button {
   margin-top: $headerHeight;
 }
 
+.archive-banner {
+  width: 100%;
+  height: 110px;
+  background: #F9E08E;
+  position: fixed;
+  z-index: 100000;
+  top: 0;
+  left: 0;
+  text-align: center;
+  color: $black;
+  font-size: 16px;
+  padding: 16px;
+  a {
+    text-decoration: underline;
+    color: $black;
+  }
+}
+
 .nav-container {
   width: $navWidth;
   height: 100%;
@@ -410,7 +428,7 @@ button {
 }
 
 /* Medium to Small Screens */
-@media screen and (max-width: $mapMaxBreak - 1) {
+@media screen and (max-width: $mapMaxBreak-1) {
   #large-breakpoint {
     display: none;
   }

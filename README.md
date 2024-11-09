@@ -1,3 +1,7 @@
+# Deprecated
+
+As of October 2024, this public domain visualization tool will no longer be updated by NYPL and will soon be archived with limited functionality. The source code for the project can be found here: https://github.com/nypl-publicdomain/pd-visualization and public domain materials can be viewed on Digital Collections here: https://digitalcollections.nypl.org/search/index?utf8=%E2%9C%93&keywords=&filters%5Brights%5D=pd.
+
 # NYPL Public Domain Release 2016 Visualization
 
 On January 6th, 2016, The New York Public Library made 187,000 digital items in the public domain available for high resolution download. This is a visualization and interface that helps users explore what was contained in that release.
@@ -10,19 +14,23 @@ To generate the images and data that powers the UI, a number of python scripts h
 
 1. Download and unzip a [data dump](https://s3.amazonaws.com/labs.nypl.org/publicdomain/pd_mms_items.ndjson.gz) of NYPL items
 2. Run the following scripts to extract necessary item categories
-  - [get_captures.py](scripts/get_captures.py) retrieves capture ids to retrieve the images
-  - [get_dates.py](scripts/get_dates.py) retrieves the creation dates from the items
-  - [get_genres.py](scripts/get_genres.py) retrieves the genres from the items
-  - [get_collections.py](scripts/get_collections.py) retrieves the collections from the items
+
+- [get_captures.py](scripts/get_captures.py) retrieves capture ids to retrieve the images
+- [get_dates.py](scripts/get_dates.py) retrieves the creation dates from the items
+- [get_genres.py](scripts/get_genres.py) retrieves the genres from the items
+- [get_collections.py](scripts/get_collections.py) retrieves the collections from the items
+
 3. Run [download_images.py](scripts/download_images.py) to download all the images of the first captures of the items
 4. Run [get_color_data.py](scripts/get_color_data.py) and [get_colors.py](scripts/get_colors.py) to get the colors from the images
 5. Run [stitch_images.py](scripts/stitch_images.py) to stitch together the images for each item category
 6. The following scripts do some pre-processing for the UI:
-  - [generate_metadata.py](scripts/generate_metadata.py) - loads all the metadata (title, description, uuid, etc) for the item thumbnail preview
-  - [generate_labels.py](scripts/generate_labels.py) - generates the labels and counts for the righthand column in the UI
-  - [generate_coordinates.py](scripts/generate_coordinates.py) - generates the pixel coordinates of each item for each collection for easy look-up on hover
+
+- [generate_metadata.py](scripts/generate_metadata.py) - loads all the metadata (title, description, uuid, etc) for the item thumbnail preview
+- [generate_labels.py](scripts/generate_labels.py) - generates the labels and counts for the righthand column in the UI
+- [generate_coordinates.py](scripts/generate_coordinates.py) - generates the pixel coordinates of each item for each collection for easy look-up on hover
 
 ---
+
 ### About the NYPL Public Domain Release
 
 On January 6, 2016, The New York Public Library enhanced access to public domain items in Digital Collections so that everyone has the freedom to enjoy and reuse these materials in almost limitless ways. For all such items the Library now makes it possible to download the highest resolution images available directly from the [Digital Collections](http://digitalcollections.nypl.org) website.

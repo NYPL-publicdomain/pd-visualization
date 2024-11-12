@@ -31,6 +31,36 @@ To generate the images and data that powers the UI, a number of python scripts h
 
 ---
 
+### Local setup
+
+1. Install the required packages
+
+```bash
+npm install
+```
+
+2. Run the app locally with npm:
+
+```bash
+npm run start
+```
+
+3. To re-compile your CSS as you change it during local development, run:
+
+```bash
+npm run watch
+```
+
+alongside your server.
+
+### Deploying
+
+Push to `master` to deploy to Github Pages. Be sure to compile before committing by running
+
+```bash
+npm run build
+```
+
 ### About the NYPL Public Domain Release
 
 On January 6, 2016, The New York Public Library enhanced access to public domain items in Digital Collections so that everyone has the freedom to enjoy and reuse these materials in almost limitless ways. For all such items the Library now makes it possible to download the highest resolution images available directly from the [Digital Collections](http://digitalcollections.nypl.org) website.

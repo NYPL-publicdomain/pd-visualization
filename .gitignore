@@ -3,3 +3,4 @@
 _dev
 tmp
 scripts/sandbox.py
+node_modules/

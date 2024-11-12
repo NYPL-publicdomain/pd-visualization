@@ -3,7 +3,7 @@
   "description": "Visualizing the PD",
   "scripts": {
     "start": "node server.js",
-    "build": "sass",
+    "build": "sass scss:css",
     "watch": "sass --watch scss:css"
   },
   "devDependencies": {
